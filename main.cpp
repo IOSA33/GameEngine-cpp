@@ -8,9 +8,15 @@
 #include "src/stb_image.h"
 
 // decalaration
-void moveX(float& x, char c);
-void moveY(float& x, char c);
+void move(float& x, char c);
+void setVisible(float& x, char c);
 
+namespace Globals {
+	float offsetX = 0.0f;
+	float offsetY = 0.0f;
+    float visible = 0.2f;
+
+} // namespace Globals
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
 // ---------------------------------------------------------------------------------------------
@@ -36,37 +42,41 @@ void processInput(GLFWwindow *window)
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-namespace Globals {
-	float offsetX = 0.0f;
-	float offsetY = 0.0f;
-
-} // namespace Globals
-
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_D && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
-		moveX(Globals::offsetX, 'r');
+		move(Globals::offsetX, 'r');
 	} 
 	if (key == GLFW_KEY_A && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
-		moveX(Globals::offsetX, 'l');
+		move(Globals::offsetX, 'l');
 	} 
     if (key == GLFW_KEY_W && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
-		moveY(Globals::offsetY, 'u');
+		move(Globals::offsetY, 'u');
 	} 
 	if (key == GLFW_KEY_S && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
-		moveY(Globals::offsetY, 'd');
+		move(Globals::offsetY, 'd');
 	} 
+    if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
+		setVisible(Globals::visible, 'd');
+	}
+    if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
+		setVisible(Globals::visible, 'u');
+	}  
 }
 
-void moveX(float& x, char c) {
-	const std::string op = "main/moveX()";
+void setVisible(float& x, char c) {
+	const std::string op = "main/setVisible()";
 	switch (c)
 	{
-	case 'r':
-		x += 0.02f;
+	case 'u':
+        if (!(x > 1.0)) {
+            x += 0.02f;
+        }
 		break;
-	case 'l':
-		x -= 0.02f;
+	case 'd':
+		if (!(x < 0.0)) {
+            x -= 0.02f;
+        }
 		break;
 	default:
 		std::cout << op << ": default break\n";
@@ -74,15 +84,29 @@ void moveX(float& x, char c) {
 	}
 }
 
-void moveY(float& x, char c) {
+void move(float& x, char c) {
 	const std::string op = "main/moveX()";
 	switch (c)
 	{
-	case 'u':
-		x += 0.02f;
+	case 'r':
+        if (!(x > 1.0f)) {
+            x += 0.02f;
+        }
+		break;
+	case 'l':
+        if (!(x < -1.0f)) {
+            x -= 0.02f;
+        }
+		break;
+    case 'u':
+		if (!(x > 1.0f)) {
+            x += 0.02f;
+        }
 		break;
 	case 'd':
-		x -= 0.02f;
+		if (!(x < -1.0f)) {
+            x -= 0.02f;
+        }
 		break;
 	default:
 		std::cout << op << ": default break\n";
@@ -189,7 +213,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     // set texture filtering parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     // load image, create texture and generate mipmaps
     int width, height, nrChannels;
@@ -261,6 +285,7 @@ int main()
         ourShader.use();
 		ourShader.setFloat("someUniformX", Globals::offsetX);
 		ourShader.setFloat("someUniformY", Globals::offsetY);
+        ourShader.setFloat("visible", Globals::visible);
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
