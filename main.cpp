@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "src/gameClasses/Player.h"
 
 // decalaration
 void move(float& x, char c);
@@ -264,6 +265,7 @@ int main()
     ourShader.setInt("texture2", 1);
 
 
+    Player player{};
 
     // render loop
     // -----------
@@ -284,26 +286,14 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
 
-        glm::mat4 transform = glm::mat4(1.0f);
-        transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
-        transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-
         // render the triangle
         ourShader.use();
-        unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        player.move(Globals::offsetX, Globals::offsetY, ourShader);
 
-		ourShader.setFloat("someUniformX", Globals::offsetX);
-		ourShader.setFloat("someUniformY", Globals::offsetY);
+        // ourShader.setFloat("someUniformX", Globals::offsetX);
+		// ourShader.setFloat("someUniformY", Globals::offsetY);
         ourShader.setFloat("visible", Globals::visible);
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-
-        transform = glm::mat4(1.0f);
-        transform  = glm::translate(transform , glm::vec3(0.2f, 0.5f, 0.0f));
-
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
