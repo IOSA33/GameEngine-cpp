@@ -6,8 +6,6 @@
 #include "../shader.h"
 #include <algorithm>
 
-bool collisionAABB(const Player& o1, const Player& o2);
-
 void Player::move(float x, float y, Shader& ourShader) {
     glm::mat4 transform = glm::mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(x, y, 0.0f));
@@ -93,7 +91,7 @@ void Player::setPositionHard(char c, float a) {
     }
 }
 
-bool collisionAABB(const Player& o1, const Player& o2) {
+bool collisionAABB(Player& o1, Player& o2) {
     float minX_a = o1.getPosition('x') - 0.2f;
     float maxX_a = o1.getPosition('x') + 0.2f;
     float minX_b = o2.getPosition('x') - 0.2f;
@@ -107,8 +105,33 @@ bool collisionAABB(const Player& o1, const Player& o2) {
     bool collisionX = minX_a <= maxX_b && maxX_a >= minX_b;
     bool collisionY = minY_a <= maxY_b && maxY_a >= minY_b;
 
-    return collisionX && collisionY;
+    // If state is true it means we have collision
+    bool state = collisionX && collisionY;
+    if (state) {
+        float overlapX = std::min(maxX_a, maxX_b) - std::max(minX_a, minX_b);
+        float overlapY = std::min(maxY_a, maxY_b) - std::max(minY_a, minY_b);
+
+        if (overlapX < overlapY) {
+            if (maxX_a > maxX_b)
+                o1.setPositionHard('x', o1.getPosition('x') + overlapX);
+            else
+                o1.setPositionHard('x', o1.getPosition('x') - overlapX);
+        } else {
+            o1.setVelocity(0.0f);
+            if (maxY_a > maxY_b)
+                o1.setPositionHard('y', o1.getPosition('y') + overlapY);
+            else
+                o1.setPositionHard('y', o1.getPosition('y') - overlapY);
+                o1.m_onGround = true;
+        }
+    }
+
+    return false;
 }
 
-
-
+void Player::attack(Player& player, int damage) {
+    if (player.m_hp > 0) {
+        player.setHp(player.getHp() - damage);
+        std::cout << "Enemy has hp left: " << player.getHp() << '\n';
+    } 
+}

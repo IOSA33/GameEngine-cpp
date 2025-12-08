@@ -19,7 +19,8 @@ target_include_directories(glad PUBLIC ${PROJECT_SOURCE_DIR}/Libraries/include)
 
 # main.exe
 add_executable(app main.cpp
-                   src/gameClasses/Player.cpp)
+                   src/gameClasses/Player.cpp
+                   src/gameClasses/Weapon.cpp)
 
 # GLFW from MSYS2/MinGW64
 find_package(PkgConfig REQUIRED)

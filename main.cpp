@@ -10,9 +10,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "src/gameClasses/Player.h"
+#include "src/gameClasses/Weapon.h"
+#include <vector>
 
 // decalaration
-void processInput(GLFWwindow *window, Player& player, Player& player2, Shader& shader, GLfloat deltaTime);
+void processInput(GLFWwindow *window, Player& player, Player& player2, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec);
 void setVisible(float& x, char c);
 
 namespace Globals {
@@ -186,6 +188,8 @@ int main()
     GLfloat deltaTime = 0.0f;
     GLfloat lastFrame = 0.0f;
 
+    std::vector<Weapon> vec{};
+
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -197,7 +201,7 @@ int main()
 
         // input
         // -----
-        processInput(window, player, player2, ourShader, deltaTime);
+        processInput(window, player, player2, ourShader, deltaTime, vec);
         
         // render
         // ------
@@ -221,10 +225,26 @@ int main()
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         // Second Object
-        player2.gravity(deltaTime);
+        if (!collisionAABB(player, player2)) {
+            player2.gravity(deltaTime);
+        }
         player2.updateScreen(ourShader);
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        for (auto& obj : vec) {
+            if (obj.getPosition('x') > 0.9f) {
+                vec.erase(vec.begin());
+            }
+            if (collisionAABB(player2, obj)) {
+                vec.erase(vec.begin());
+                player.attack(player2, obj.getDamage());
+            }
+            obj.updateWindow(ourShader);
+            glBindVertexArray(VAO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            obj.move(deltaTime);
+        }
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -244,7 +264,7 @@ int main()
     return 0;
 }
 
-void processInput(GLFWwindow *window, Player& player, Player& player2, Shader& shader, GLfloat deltaTime)
+void processInput(GLFWwindow *window, Player& player, Player& player2, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
@@ -269,12 +289,21 @@ void processInput(GLFWwindow *window, Player& player, Player& player2, Shader& s
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
         if (!collisionAABB(player, player2)) {
-            if (player.getPosition('y') == -0.5f) {
+            if (player.getPosition('y') == -0.5f || player.getOnGround() == true) {
                 player.setPosition('u', deltaTime);
                 player.move(player.getPosition('x'), player.getPosition('y'), shader);
+                player.setOnGround(false);
             }
         }
     }
+    static bool leftWasPressed = false;
+    bool leftPressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+    if (leftPressed && !leftWasPressed) {
+        Weapon newAmmo{ player.getPosition('x'), player.getPosition('y') };
+        vec.push_back(newAmmo);
+    }
+    leftWasPressed = leftPressed;
+
 
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
         player.setPosition('u', deltaTime);
