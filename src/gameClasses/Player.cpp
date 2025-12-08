@@ -6,6 +6,14 @@
 #include "../shader.h"
 #include <algorithm>
 
+namespace Map {
+    float borderX_RIGHT { 1.0f };
+    float borderX_LEFT { -1.0f };
+    float borderY_UP { 1.0f };
+    float borderY_DOWN { -1.0f };
+    float ground { -0.5f };
+}
+
 void Player::move(float x, float y, Shader& ourShader) {
     glm::mat4 transform = glm::mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(x, y, 0.0f));
@@ -92,15 +100,15 @@ void Player::setPositionHard(char c, float a) {
 }
 
 bool collisionAABB(Player& o1, Player& o2) {
-    float minX_a = o1.getPosition('x') - 0.2f;
-    float maxX_a = o1.getPosition('x') + 0.2f;
-    float minX_b = o2.getPosition('x') - 0.2f;
-    float maxX_b = o2.getPosition('x') + 0.2f;
+    float minX_a = o1.getPosition('x') - 0.1f;
+    float maxX_a = o1.getPosition('x') + 0.1f;
+    float minX_b = o2.getPosition('x') - 0.1f;
+    float maxX_b = o2.getPosition('x') + 0.1f;
 
-    float minY_a = o1.getPosition('y') - 0.2f;
-    float maxY_a = o1.getPosition('y') + 0.2f;
-    float minY_b = o2.getPosition('y') - 0.2f;
-    float maxY_b = o2.getPosition('y') + 0.2f;
+    float minY_a = o1.getPosition('y') - 0.1f;
+    float maxY_a = o1.getPosition('y') + 0.1f;
+    float minY_b = o2.getPosition('y') - 0.1f;
+    float maxY_b = o2.getPosition('y') + 0.1f;
 
     bool collisionX = minX_a <= maxX_b && maxX_a >= minX_b;
     bool collisionY = minY_a <= maxY_b && maxY_a >= minY_b;

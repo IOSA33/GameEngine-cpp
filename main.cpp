@@ -91,10 +91,10 @@ int main()
     // ------------------------------------------------------------------
     float vertices[] = {
         // positions          // colors           // texture coords
-        0.2f,  0.2f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-        0.2f, -0.2f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-        -0.2f, -0.2f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-        -0.2f,  0.2f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+        0.1f,  0.1f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+        0.1f, -0.1f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+        -0.1f, -0.1f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+        -0.1f,  0.1f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
     };
 
     unsigned int indices[] = {  
@@ -126,7 +126,7 @@ int main()
     glEnableVertexAttribArray(2);
 
     Player player{};
-    Player player2{0.5f, 0.5f};
+    Player player2{0.5f, 0.5f, 0.2f, 0.2f};
 
     // load and create a texture 
     // -------------------------
@@ -204,8 +204,8 @@ int main()
         processInput(window, player, player2, ourShader, deltaTime, vec);
         
         // render
-        // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        // ------ rgba value/255 = answer in floats
+        glClearColor(0.4f, 0.611f, 0.572f, 0.8f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         // bind Texture
@@ -233,7 +233,7 @@ int main()
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         for (auto& obj : vec) {
-            if (obj.getPosition('x') > 0.9f) {
+            if (obj.getPosition('x') > Map::borderX_RIGHT) {
                 vec.erase(vec.begin());
             }
             if (collisionAABB(player2, obj)) {
@@ -289,7 +289,7 @@ void processInput(GLFWwindow *window, Player& player, Player& player2, Shader& s
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
         if (!collisionAABB(player, player2)) {
-            if (player.getPosition('y') == -0.5f || player.getOnGround() == true) {
+            if (player.getPosition('y') == Map::ground || player.getOnGround() == true) {
                 player.setPosition('u', deltaTime);
                 player.move(player.getPosition('x'), player.getPosition('y'), shader);
                 player.setOnGround(false);
