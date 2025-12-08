@@ -12,14 +12,11 @@
 #include "src/gameClasses/Player.h"
 
 // decalaration
-void processInput(GLFWwindow *window, Player& player, Shader& shader);
+void processInput(GLFWwindow *window, Player& player, Player& player2, Shader& shader, GLfloat deltaTime);
 void setVisible(float& x, char c);
 
 namespace Globals {
-	// float offsetX = 0.0f;
-	// float offsetY = 0.0f;
     float visible = 0.2f;
-
 } // namespace Globals
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -34,8 +31,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
-
-
 
 void setVisible(float& x, char c) {
 	const std::string op = "main/setVisible()";
@@ -94,10 +89,10 @@ int main()
     // ------------------------------------------------------------------
     float vertices[] = {
         // positions          // colors           // texture coords
-        0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-        0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+        0.2f,  0.2f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+        0.2f, -0.2f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+        -0.2f, -0.2f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+        -0.2f,  0.2f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
     };
 
     unsigned int indices[] = {  
@@ -128,10 +123,8 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
-
-    // Mutta miten se on parempi kuin callbakc, joka laskee sun puolesta deltatime? 
-    // ja tekee yhen function call
     Player player{};
+    Player player2{0.5f, 0.5f};
 
     // load and create a texture 
     // -------------------------
@@ -189,25 +182,22 @@ int main()
     // or set it via the texture class
     ourShader.setInt("texture2", 1);
 
-
     // DeltaTime variables
     GLfloat deltaTime = 0.0f;
     GLfloat lastFrame = 0.0f;
-    glfwSetTime(0.0f);
 
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
     {
-       // Calculate delta time
+        // Calculate delta time
         GLfloat currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-        glfwPollEvents();
 
         // input
         // -----
-        processInput(window, player, ourShader, deltatime);
+        processInput(window, player, player2, ourShader, deltaTime);
         
         // render
         // ------
@@ -222,9 +212,17 @@ int main()
 
         // render the triangle
         ourShader.use();
+        if (!collisionAABB(player, player2)) {
+            player.gravity(deltaTime);
+        }
         player.updateScreen(ourShader);
-        // player.move(Globals::offsetX, Globals::offsetY, ourShader);
         ourShader.setFloat("visible", Globals::visible);
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        // Second Object
+        player2.gravity(deltaTime);
+        player2.updateScreen(ourShader);
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -246,25 +244,40 @@ int main()
     return 0;
 }
 
-void processInput(GLFWwindow *window, Player& player, Shader& shader)
+void processInput(GLFWwindow *window, Player& player, Player& player2, Shader& shader, GLfloat deltaTime)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        player.setPosition('r');
-        player.move(player.getPosition('x'), player.getPosition('y'), shader);
+        if (!collisionAABB(player, player2)) {
+            player.setPosition('r', deltaTime);
+            player.move(player.getPosition('x'), player.getPosition('y'), shader);  
+        }
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        player.setPosition('l');
-        player.move(player.getPosition('x'), player.getPosition('y'), shader);
+        if (!collisionAABB(player, player2)) {
+            player.setPosition('l', deltaTime);
+            player.move(player.getPosition('x'), player.getPosition('y'), shader);
+        }
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        player.setPosition('d');
-        player.move(player.getPosition('x'), player.getPosition('y'), shader);
+        if (!collisionAABB(player, player2)) {
+            player.setPosition('d', deltaTime);
+            player.move(player.getPosition('x'), player.getPosition('y'), shader);
+        }
     }
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        player.setPosition('u');
-        player.move(player.getPosition('x'), player.getPosition('y'), shader);
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        if (!collisionAABB(player, player2)) {
+            if (player.getPosition('y') == -0.5f) {
+                player.setPosition('u', deltaTime);
+                player.move(player.getPosition('x'), player.getPosition('y'), shader);
+            }
+        }
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
+        player.setPosition('u', deltaTime);
     }
 }
 
