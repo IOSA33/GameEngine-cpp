@@ -12,12 +12,12 @@
 #include "src/gameClasses/Player.h"
 
 // decalaration
-void move(float& x, char c);
+void processInput(GLFWwindow *window, Player& player, Shader& shader);
 void setVisible(float& x, char c);
 
 namespace Globals {
-	float offsetX = 0.0f;
-	float offsetY = 0.0f;
+	// float offsetX = 0.0f;
+	// float offsetY = 0.0f;
     float visible = 0.2f;
 
 } // namespace Globals
@@ -31,42 +31,11 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
-// ---------------------------------------------------------------------------------------------------------
-void processInput(GLFWwindow *window)
-{
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-}
-
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_D && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
-		move(Globals::offsetX, 'r');
-	} 
-	if (key == GLFW_KEY_A && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
-		move(Globals::offsetX, 'l');
-	} 
-    if (key == GLFW_KEY_W && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
-		move(Globals::offsetY, 'u');
-	} 
-	if (key == GLFW_KEY_S && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
-		move(Globals::offsetY, 'd');
-	} 
-    if (key == GLFW_KEY_DOWN && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
-		setVisible(Globals::visible, 'd');
-	}
-    if (key == GLFW_KEY_UP && (action == GLFW_REPEAT || action == GLFW_PRESS)) {
-		setVisible(Globals::visible, 'u');
-	}  
-}
+
 
 void setVisible(float& x, char c) {
 	const std::string op = "main/setVisible()";
@@ -87,37 +56,6 @@ void setVisible(float& x, char c) {
 		break;
 	}
 }
-
-void move(float& x, char c) {
-	const std::string op = "main/moveX()";
-	switch (c)
-	{
-	case 'r':
-        if (!(x > 1.0f)) {
-            x += 0.02f;
-        }
-		break;
-	case 'l':
-        if (!(x < -1.0f)) {
-            x -= 0.02f;
-        }
-		break;
-    case 'u':
-		if (!(x > 1.0f)) {
-            x += 0.02f;
-        }
-		break;
-	case 'd':
-		if (!(x < -1.0f)) {
-            x -= 0.02f;
-        }
-		break;
-	default:
-		std::cout << op << ": default break\n";
-		break;
-	}
-}
-
 
 int main()
 {
@@ -154,13 +92,6 @@ int main()
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
-    float verticesTriangle[] = {
-        // positions         // colors
-         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
-         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
-    };
-
     float vertices[] = {
         // positions          // colors           // texture coords
         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
@@ -173,12 +104,6 @@ int main()
         0, 1, 3, // first triangle
         1, 2, 3  // second triangle
     };
-
-	float texCoords[] = {
-		0.0f, 0.0f,  // lower-left corner  
-		1.0f, 0.0f,  // lower-right corner
-		0.5f, 1.0f   // top-center corner
-	};
 
     unsigned int VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
@@ -203,10 +128,10 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
 
-	glfwSetKeyCallback(window, key_callback);
 
-
-
+    // Mutta miten se on parempi kuin callbakc, joka laskee sun puolesta deltatime? 
+    // ja tekee yhen function call
+    Player player{};
 
     // load and create a texture 
     // -------------------------
@@ -265,16 +190,25 @@ int main()
     ourShader.setInt("texture2", 1);
 
 
-    Player player{};
+    // DeltaTime variables
+    GLfloat deltaTime = 0.0f;
+    GLfloat lastFrame = 0.0f;
+    glfwSetTime(0.0f);
 
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
     {
+       // Calculate delta time
+        GLfloat currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+        glfwPollEvents();
+
         // input
         // -----
-        processInput(window);
-
+        processInput(window, player, ourShader, deltatime);
+        
         // render
         // ------
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -288,10 +222,8 @@ int main()
 
         // render the triangle
         ourShader.use();
-        player.move(Globals::offsetX, Globals::offsetY, ourShader);
-
-        // ourShader.setFloat("someUniformX", Globals::offsetX);
-		// ourShader.setFloat("someUniformY", Globals::offsetY);
+        player.updateScreen(ourShader);
+        // player.move(Globals::offsetX, Globals::offsetY, ourShader);
         ourShader.setFloat("visible", Globals::visible);
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -312,5 +244,27 @@ int main()
     // ------------------------------------------------------------------
     glfwTerminate();
     return 0;
+}
+
+void processInput(GLFWwindow *window, Player& player, Shader& shader)
+{
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        player.setPosition('r');
+        player.move(player.getPosition('x'), player.getPosition('y'), shader);
+    }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        player.setPosition('l');
+        player.move(player.getPosition('x'), player.getPosition('y'), shader);
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        player.setPosition('d');
+        player.move(player.getPosition('x'), player.getPosition('y'), shader);
+    }
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        player.setPosition('u');
+        player.move(player.getPosition('x'), player.getPosition('y'), shader);
+    }
 }
 

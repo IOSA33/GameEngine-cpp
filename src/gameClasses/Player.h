@@ -8,10 +8,16 @@
 
 class Player {
 private:
-    int hp{};
+    int m_hp{};
+    float m_positionX{ 0.0f };
+    float m_positionY{ 0.0f };
 
 public:
-    void move(float offsetX, float offsetY, Shader& ourShader);
+    Player() = default;
+    void move(float x, float y, Shader& ourShader);
+    void setPosition(char c); 
+    float getPosition(char c) const;
+    void updateScreen(Shader& shader) const;
 };
 
 #endif
