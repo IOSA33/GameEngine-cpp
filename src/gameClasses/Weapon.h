@@ -1,8 +1,6 @@
-#include "../shader.h"
 #pragma once
-
-class Player;
-namespace Values;
+#include "../shader.h"
+#include "Player.h"
 
 #ifndef WEAPON_H
 #define WEAPON_H

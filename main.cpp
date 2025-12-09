@@ -233,7 +233,7 @@ int main()
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         for (auto& obj : vec) {
-            if (obj.getPosition('x') > Map::borderX_RIGHT) {
+            if (obj.getPosition('x') > Map::borderX_RIGHT || obj.getPosition('x') < Map::borderX_LEFT) {
                 vec.erase(vec.begin());
             }
             if (collisionAABB(player2, obj)) {

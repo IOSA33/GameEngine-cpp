@@ -9,7 +9,6 @@
 void Weapon::updateWindow(Shader& shader) const {
     glm::mat4 transform = glm::mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(m_positionX, m_positionY, 0.0f));
-    transform = glm::translate(transform, glm::vec3(m_positionX, m_positionY, 0.0f));
     transform = glm::scale(transform, glm::vec3(0.3f));
     
     unsigned int transformLoc = glGetUniformLocation(shader.ID, "transform");
@@ -17,7 +16,7 @@ void Weapon::updateWindow(Shader& shader) const {
 }
 
 void Weapon::move(GLfloat deltaTime) {
-    if (m_direction == Player::Direction::RIGHT) {
+    if (m_direction == Values::Direction::RIGHT) {
         m_positionX += 0.1f * m_speed * deltaTime;
     } else {
         m_positionX -= 0.1f * m_speed * deltaTime;
