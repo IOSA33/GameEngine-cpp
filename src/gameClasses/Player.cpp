@@ -41,11 +41,13 @@ void Player::setPosition(char c, GLfloat deltaTime) {
 	{
 	case 'r':
         if (!(getPosition('x') > 1.0f)) {
+            setDirection(Values::Direction::RIGHT);
             m_positionX += 0.1f * m_PlayerSpeed * deltaTime;
         }
 		break;
 	case 'l':
         if (!(getPosition('x') < -1.0f)) {
+            setDirection(Values::Direction::LEFT);
             m_positionX -= 0.1f * m_PlayerSpeed * deltaTime;
         }
 		break;
@@ -142,4 +144,31 @@ void Player::attack(Player& player, int damage) {
         player.setHp(player.getHp() - damage);
         std::cout << "Enemy has hp left: " << player.getHp() << '\n';
     } 
+}
+
+Values::Direction Player::getDirection(char c) {
+    const std::string op = "Player.cpp/getDirection()" ;
+    switch (c)
+    {
+    case 'u':
+        return Values::Direction::UP;
+        break;
+    case 'd':
+        return Values::Direction::DOWN;
+        break;
+    case 'r':
+        return Values::Direction::RIGHT;
+        break;
+    case 'l':
+        return Values::Direction::LEFT;
+        break;
+    default:
+        std::cout << "Default: " << op;
+        return Values::Direction::RIGHT;
+        break;
+    }
+}
+
+void Player::setDirection(Values::Direction x) {
+    m_direction = x;
 }

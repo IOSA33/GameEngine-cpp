@@ -240,6 +240,8 @@ int main()
                 vec.erase(vec.begin());
                 player.attack(player2, obj.getDamage());
             }
+
+
             obj.updateWindow(ourShader);
             glBindVertexArray(VAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -299,7 +301,7 @@ void processInput(GLFWwindow *window, Player& player, Player& player2, Shader& s
     static bool leftWasPressed = false;
     bool leftPressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
     if (leftPressed && !leftWasPressed) {
-        Weapon newAmmo{ player.getPosition('x'), player.getPosition('y') };
+        Weapon newAmmo{ player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection() };
         vec.push_back(newAmmo);
     }
     leftWasPressed = leftPressed;

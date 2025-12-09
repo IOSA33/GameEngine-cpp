@@ -11,7 +11,14 @@
 namespace Values {
     constexpr float gravity { -9.81f };
     constexpr float jumpStrenght{ 4.0f };
-};
+
+    enum Direction {
+        UP,
+        DOWN,
+        RIGHT,
+        LEFT
+    };
+}
 
 namespace Map {
     extern float borderX_RIGHT;
@@ -31,6 +38,7 @@ private:
     bool m_onGround { false };
     float m_height{};
     float m_width{};
+    Values::Direction m_direction{ Values::Direction::RIGHT };
 
 public:
     Player() = default;
@@ -51,7 +59,11 @@ public:
     void setOnGround(bool x) {m_onGround = x; };
     float getHeight() { return m_height; };
     float getWidth() { return m_width; };
+    Values::Direction getCurrentDirection() { return m_direction; };
+    void setDirection(Values::Direction x);
 
+
+    static Values::Direction getDirection(char c);
     friend bool collisionAABB(Player& o1, Player& o2);
 };
 

@@ -1,8 +1,9 @@
 #include "../shader.h"
+#pragma once
 
 class Player;
+namespace Values;
 
-#pragma once
 #ifndef WEAPON_H
 #define WEAPON_H
 
@@ -17,12 +18,13 @@ private:
     int m_damage{ 1 };
     float m_positionX{};
     float m_positionY{};
+    Values::Direction m_direction{ Values::Direction::RIGHT };
     float m_speed{ 20.0f };
 
 public:
     Weapon() = default;
-    explicit Weapon(float x, float y) 
-        : m_positionX(x), m_positionY(y) {}
+    Weapon(float x, float y, Values::Direction direction) 
+        : m_positionX(x), m_positionY(y), m_direction(direction) {}
         
     void updateWindow(Shader& shader) const;
     void move(GLfloat deltaTime);
