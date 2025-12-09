@@ -14,7 +14,7 @@
 #include <vector>
 
 // decalaration
-void processInput(GLFWwindow *window, Player& player, Player& player2, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec);
+void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec);
 void setVisible(float& x, char c);
 
 namespace Globals {
@@ -128,6 +128,13 @@ int main()
     Player player{};
     Player player2{0.5f, 0.5f, 0.2f, 0.2f};
 
+    std::vector<Weapon> vec{};
+    std::vector<Player> players{};
+    players.push_back(player);
+    players.push_back(player2);
+
+
+
     // load and create a texture 
     // -------------------------
     unsigned int texture1, texture2;
@@ -188,7 +195,7 @@ int main()
     GLfloat deltaTime = 0.0f;
     GLfloat lastFrame = 0.0f;
 
-    std::vector<Weapon> vec{};
+
 
     // render loop
     // -----------
@@ -201,7 +208,7 @@ int main()
 
         // input
         // -----
-        processInput(window, player, player2, ourShader, deltaTime, vec);
+        processInput(window, players, ourShader, deltaTime, vec);
         
         // render
         // ------ rgba value/255 = answer in floats
@@ -215,32 +222,28 @@ int main()
         glBindTexture(GL_TEXTURE_2D, texture2);
 
         // render the triangle
-        ourShader.use();
-        if (!collisionAABB(player, player2)) {
-            player.gravity(deltaTime);
-        }
-        player.updateScreen(ourShader);
-        ourShader.setFloat("visible", Globals::visible);
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        // Second Object
-        if (!collisionAABB(player, player2)) {
-            player2.gravity(deltaTime);
+        for (auto& obj: players) {
+            ourShader.use();
+            ourShader.setFloat("visible", Globals::visible);
+            if (!collisionAABB(players[0], players[1])) {
+                obj.gravity(deltaTime);
+            }
+
+            obj.updateScreen(ourShader);
+            glBindVertexArray(VAO);
+
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         }
-        player2.updateScreen(ourShader);
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         for (auto& obj : vec) {
             if (obj.getPosition('x') > Map::borderX_RIGHT || obj.getPosition('x') < Map::borderX_LEFT) {
                 vec.erase(vec.begin());
             }
-            if (collisionAABB(player2, obj)) {
+            if (collisionAABB(players[1], obj)) {
                 vec.erase(vec.begin());
-                player.attack(player2, obj.getDamage());
+                player.attack(players[1], obj.getDamage());
             }
-
 
             obj.updateWindow(ourShader);
             glBindVertexArray(VAO);
@@ -266,49 +269,49 @@ int main()
     return 0;
 }
 
-void processInput(GLFWwindow *window, Player& player, Player& player2, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec)
+void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        if (!collisionAABB(player, player2)) {
-            player.setPosition('r', deltaTime);
-            player.move(player.getPosition('x'), player.getPosition('y'), shader);  
+        if (!collisionAABB(vecPlayers[0], vecPlayers[1])) {
+            vecPlayers[0].setPosition('r', deltaTime);
+            vecPlayers[0].move(vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), shader);  
         }
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        if (!collisionAABB(player, player2)) {
-            player.setPosition('l', deltaTime);
-            player.move(player.getPosition('x'), player.getPosition('y'), shader);
+        if (!collisionAABB(vecPlayers[0], vecPlayers[1])) {
+            vecPlayers[0].setPosition('l', deltaTime);
+            vecPlayers[0].move(vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), shader);
         }
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        if (!collisionAABB(player, player2)) {
-            player.setPosition('d', deltaTime);
-            player.move(player.getPosition('x'), player.getPosition('y'), shader);
+        if (!collisionAABB(vecPlayers[0], vecPlayers[1])) {
+            vecPlayers[0].setPosition('d', deltaTime);
+            vecPlayers[0].move(vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), shader);
         }
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        if (!collisionAABB(player, player2)) {
-            if (player.getPosition('y') == Map::ground || player.getOnGround() == true) {
-                player.setPosition('u', deltaTime);
-                player.move(player.getPosition('x'), player.getPosition('y'), shader);
-                player.setOnGround(false);
+        if (!collisionAABB(vecPlayers[0], vecPlayers[1])) {
+            if (vecPlayers[0].getPosition('y') == Map::ground || vecPlayers[0].getOnGround() == true) {
+                vecPlayers[0].setPosition('u', deltaTime);
+                vecPlayers[0].move(vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), shader);
+                vecPlayers[0].setOnGround(false);
             }
         }
     }
     static bool leftWasPressed = false;
     bool leftPressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
     if (leftPressed && !leftWasPressed) {
-        Weapon newAmmo{ player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection() };
+        Weapon newAmmo{ vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), vecPlayers[0].getCurrentDirection() };
         vec.push_back(newAmmo);
     }
     leftWasPressed = leftPressed;
 
 
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-        player.setPosition('u', deltaTime);
+        vecPlayers[0].setPosition('u', deltaTime);
     }
 }
 
