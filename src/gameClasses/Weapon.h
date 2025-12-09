@@ -8,11 +8,11 @@
 class Weapon {
     enum Type {
         pistol,
-        fireball,
+        fireSword,
     };
 
 private:
-    Type type{ pistol };
+    Type m_type{ pistol };
     int m_damage{ 1 };
     float m_positionX{};
     float m_positionY{};
@@ -28,7 +28,10 @@ public:
     void move(GLfloat deltaTime);
     [[nodiscard]] float getPosition(char c) const;
     [[nodiscard]] int getDamage() const { return m_damage; };
-    
+    Type getWeaponType() const { return m_type; }
+    void setDamage(int x) { m_damage = x; }
+
+
     friend bool collisionAABB(const Player& o1, const Weapon& o2);
 };
 
