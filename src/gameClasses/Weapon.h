@@ -21,15 +21,15 @@ private:
 
 public:
     Weapon() = default;
-    Weapon(float x, float y, Values::Direction direction) 
+    Weapon(const float x, const float y, const Values::Direction direction)
         : m_positionX(x), m_positionY(y), m_direction(direction) {}
         
-    void updateWindow(Shader& shader) const;
+    void updateWindow(const Shader& shader) const;
     void move(GLfloat deltaTime);
-    float getPosition(char c) const;
-    int getDamage() { return m_damage; };
+    [[nodiscard]] float getPosition(char c) const;
+    [[nodiscard]] int getDamage() const { return m_damage; };
     
-    friend bool collisionAABB(Player& o1, Weapon& o2);
+    friend bool collisionAABB(const Player& o1, const Weapon& o2);
 };
 
 #endif

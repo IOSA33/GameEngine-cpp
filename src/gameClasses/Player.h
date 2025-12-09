@@ -2,10 +2,6 @@
 #define PLAYER_H
 
 #pragma once
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include "../shader.h"
 
 namespace Values {
@@ -42,29 +38,29 @@ private:
 
 public:
     Player() = default;
-    Player(float x, float y, float height, float width) 
+    Player(const float x, const float y,  const float height, const float width)
         : m_positionX(x), m_positionY(y), m_height(height), m_width(width) {};
 
-    void move(float x, float y, Shader& ourShader);
+    void move(float x, float y, const Shader& ourShader);
     void setPosition(char c, GLfloat deltaTime); 
     void setPositionHard(char c, float a);
-    float getPosition(char c) const;
-    void updateScreen(Shader& shader) const;
+    [[nodiscard]] float getPosition(char c) const;
+    void updateScreen(const Shader& shader) const;
     void gravity(GLfloat deltaTime);
-    void setVelocity(const float x) { m_velocity = x; };
+    void setVelocity(const float x) { m_velocity = x; }
     void attack(Player& player, int damage);
-    void setHp(int x) { m_hp = x; };
-    int getHp() { return m_hp; }; 
-    bool getOnGround() const { return m_onGround; };
-    void setOnGround(bool x) {m_onGround = x; };
-    float getHeight() { return m_height; };
-    float getWidth() { return m_width; };
-    Values::Direction getCurrentDirection() { return m_direction; };
+    void setHp(const int x) { m_hp = x; }
+    [[nodiscard]] int getHp() const { return m_hp; }
+    [[nodiscard]] bool getOnGround() const { return m_onGround; }
+    void setOnGround(const bool x) {m_onGround = x; }
+    [[nodiscard]] float getHeight() const { return m_height; }
+    [[nodiscard]] float getWidth() const { return m_width; }
+    [[nodiscard]] Values::Direction getCurrentDirection() const { return m_direction; }
     void setDirection(Values::Direction x);
 
 
     static Values::Direction getDirection(char c);
-    friend bool collisionAABB(Player& o1, Player& o2);
+    friend bool collisionAABB(Player& o1, const Player& o2);
 };
 
 #endif

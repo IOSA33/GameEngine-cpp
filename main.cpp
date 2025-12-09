@@ -6,14 +6,11 @@
 #include <string>
 #define STB_IMAGE_IMPLEMENTATION
 #include "src/stb_image.h"
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include "src/gameClasses/Player.h"
 #include "src/gameClasses/Weapon.h"
 #include <vector>
 
-// decalaration
+// declaration
 void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec);
 void setVisible(float& x, char c);
 
@@ -31,8 +28,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+constexpr unsigned int SCR_WIDTH = 900;
+constexpr unsigned int SCR_HEIGHT = SCR_WIDTH * 9 / 16 + 60;
 
 void setVisible(float& x, char c) {
 	const std::string op = "main/setVisible()";
@@ -65,8 +62,8 @@ int main()
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-    if (window == NULL)
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", nullptr, nullptr);
+    if (window == nullptr)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -86,7 +83,7 @@ int main()
     // build and compile our shader program
     // ------------------------------------
     Shader ourShader("../src/shader.vs", "../src/shader.fs"); // you can name your shader files however you like
-
+    Shader bgShader("../src/bg.vs", "../src/bg.fs");
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float vertices[] = {
@@ -98,6 +95,19 @@ int main()
     };
 
     unsigned int indices[] = {  
+        0, 1, 3, // first triangle
+        1, 2, 3  // second triangle
+    };
+
+    float verticesBG[] = {
+        // positions         // texture coords
+         1.0f,  1.0f, 0.0f,   1.0f, 1.0f,   // top right
+         1.0f, -1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+        -1.0f, -1.0f, 0.0f,   0.0f, 0.0f,   // bottom left
+        -1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+    };
+
+    unsigned int indicesBG[] = {  
         0, 1, 3, // first triangle
         1, 2, 3  // second triangle
     };
@@ -116,7 +126,7 @@ int main()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)nullptr);
     glEnableVertexAttribArray(0);
     // color attribute
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -124,6 +134,27 @@ int main()
     // texture coord attribute
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
+
+    glBindVertexArray(0);
+
+    unsigned int bgVBO, bgVAO, bgEBO;
+    glGenVertexArrays(1, &bgVAO);
+    glGenBuffers(1, &bgVBO);
+    glGenBuffers(1, &bgEBO);
+
+    glBindVertexArray(bgVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, bgVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(verticesBG), verticesBG, GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bgEBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesBG), indicesBG, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)nullptr);
+    glEnableVertexAttribArray(0);
+    
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+
 
     Player player{};
     Player player2{0.5f, 0.5f, 0.2f, 0.2f};
@@ -149,10 +180,10 @@ int main()
     // load image, create texture and generate mipmaps
     int width, height, nrChannels;
     stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-    unsigned char *data = stbi_load("../src/container.jpg", &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load("../src/container.png", &width, &height, &nrChannels, 0);
     if (data)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
@@ -170,11 +201,12 @@ int main()
     // set texture filtering parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    int width1, height1, nrChannels1;
     // load image, create texture and generate mipmaps
-    data = stbi_load("../src/awesomeface.png", &width, &height, &nrChannels, 0);
+    data = stbi_load("../src/background.jpg", &width1, &height1, &nrChannels1, 0);
     if (data)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width1, height1, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
@@ -188,14 +220,14 @@ int main()
     ourShader.use(); // don't forget to activate/use the shader before setting uniforms!
     // either set it manually like so:
     glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0);
+
+    bgShader.use();
     // or set it via the texture class
-    ourShader.setInt("texture2", 1);
+    glUniform1i(glGetUniformLocation(bgShader.ID, "background"), 0);
 
     // DeltaTime variables
     GLfloat deltaTime = 0.0f;
     GLfloat lastFrame = 0.0f;
-
-
 
     // render loop
     // -----------
@@ -215,14 +247,15 @@ int main()
         glClearColor(0.4f, 0.611f, 0.572f, 0.8f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // bind Texture
-        glActiveTexture(GL_TEXTURE0); // activate the texture unit first before binding texture
-        glBindTexture(GL_TEXTURE_2D, texture1);
-        glActiveTexture(GL_TEXTURE1);
+        bgShader.use();
         glBindTexture(GL_TEXTURE_2D, texture2);
+        glBindVertexArray(bgVAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        
+        // bind different Texture
+        glBindTexture(GL_TEXTURE_2D, texture1);
 
         // render the triangle
-
         for (auto& obj: players) {
             ourShader.use();
             ourShader.setFloat("visible", Globals::visible);
@@ -233,7 +266,7 @@ int main()
             obj.updateScreen(ourShader);
             glBindVertexArray(VAO);
 
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
         }
 
         for (auto& obj : vec) {
@@ -247,7 +280,7 @@ int main()
 
             obj.updateWindow(ourShader);
             glBindVertexArray(VAO);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
             obj.move(deltaTime);
         }
 

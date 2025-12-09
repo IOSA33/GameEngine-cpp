@@ -14,20 +14,19 @@ namespace Map {
     float ground { -0.5f };
 }
 
-void Player::move(float x, float y, Shader& ourShader) {
-    glm::mat4 transform = glm::mat4(1.0f);
+void Player::move(const float x, const float y, const Shader& ourShader) {
+    auto transform = glm::mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(x, y, 0.0f));
 
-    unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
+    const unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
 }
 
-float Player::getPosition(char c) const {
+float Player::getPosition(const char c) const {
     switch (c)
     {
     case 'x':
         return m_positionX;
-        break;
     case 'y':
         return m_positionY;
     default:
@@ -35,7 +34,7 @@ float Player::getPosition(char c) const {
     }
 }
 
-void Player::setPosition(char c, GLfloat deltaTime) {
+void Player::setPosition(const char c, const GLfloat deltaTime) {
 	const std::string op = "player/setPosition()";
 	switch (c)
 	{
@@ -69,15 +68,15 @@ void Player::setPosition(char c, GLfloat deltaTime) {
 	}
 }
 
-void Player::updateScreen(Shader& shader) const {
-    glm::mat4 transform = glm::mat4(1.0f);
+void Player::updateScreen(const Shader& shader) const {
+    auto transform = glm::mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(m_positionX, m_positionY, 0.0f));
 
-    unsigned int transformLoc = glGetUniformLocation(shader.ID, "transform");
+    const unsigned int transformLoc = glGetUniformLocation(shader.ID, "transform");
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
 }
 
-void Player::gravity(GLfloat deltaTime) {
+void Player::gravity(const GLfloat deltaTime) {
     m_velocity += Values::gravity * deltaTime;
     m_positionY += m_velocity * deltaTime;
     if (getPosition('y') < -0.5f) {
@@ -86,7 +85,7 @@ void Player::gravity(GLfloat deltaTime) {
     }
 }
 
-void Player::setPositionHard(char c, float a) {
+void Player::setPositionHard(const char c, const float a) {
     switch (c)
     {
     case 'x':
@@ -101,25 +100,25 @@ void Player::setPositionHard(char c, float a) {
     }
 }
 
-bool collisionAABB(Player& o1, Player& o2) {
-    float minX_a = o1.getPosition('x') - 0.1f;
-    float maxX_a = o1.getPosition('x') + 0.1f;
-    float minX_b = o2.getPosition('x') - 0.1f;
-    float maxX_b = o2.getPosition('x') + 0.1f;
+bool collisionAABB(Player& o1, const Player& o2) {
+    const float minX_a = o1.getPosition('x') - 0.1f;
+    const float maxX_a = o1.getPosition('x') + 0.1f;
+    const float minX_b = o2.getPosition('x') - 0.1f;
+    const float maxX_b = o2.getPosition('x') + 0.1f;
 
-    float minY_a = o1.getPosition('y') - 0.1f;
-    float maxY_a = o1.getPosition('y') + 0.1f;
-    float minY_b = o2.getPosition('y') - 0.1f;
-    float maxY_b = o2.getPosition('y') + 0.1f;
+    const float minY_a = o1.getPosition('y') - 0.1f;
+    const float maxY_a = o1.getPosition('y') + 0.1f;
+    const float minY_b = o2.getPosition('y') - 0.1f;
+    const float maxY_b = o2.getPosition('y') + 0.1f;
 
-    bool collisionX = minX_a <= maxX_b && maxX_a >= minX_b;
-    bool collisionY = minY_a <= maxY_b && maxY_a >= minY_b;
+    const bool collisionX = minX_a <= maxX_b && maxX_a >= minX_b;
+    const bool collisionY = minY_a <= maxY_b && maxY_a >= minY_b;
 
     // If state is true it means we have collision
-    bool state = collisionX && collisionY;
+    const bool state = collisionX && collisionY;
     if (state) {
-        float overlapX = std::min(maxX_a, maxX_b) - std::max(minX_a, minX_b);
-        float overlapY = std::min(maxY_a, maxY_b) - std::max(minY_a, minY_b);
+        const float overlapX = std::min(maxX_a, maxX_b) - std::max(minX_a, minX_b);
+        const float overlapY = std::min(maxY_a, maxY_b) - std::max(minY_a, minY_b);
 
         if (overlapX < overlapY) {
             if (maxX_a > maxX_b)
@@ -139,36 +138,31 @@ bool collisionAABB(Player& o1, Player& o2) {
     return false;
 }
 
-void Player::attack(Player& player, int damage) {
+void Player::attack(Player& player, const int damage) {
     if (player.m_hp > 0) {
         player.setHp(player.getHp() - damage);
         std::cout << "Enemy has hp left: " << player.getHp() << '\n';
     } 
 }
 
-Values::Direction Player::getDirection(char c) {
+Values::Direction Player::getDirection(const char c) {
     const std::string op = "Player.cpp/getDirection()" ;
     switch (c)
     {
     case 'u':
         return Values::Direction::UP;
-        break;
     case 'd':
         return Values::Direction::DOWN;
-        break;
     case 'r':
         return Values::Direction::RIGHT;
-        break;
     case 'l':
         return Values::Direction::LEFT;
-        break;
     default:
         std::cout << "Default: " << op;
         return Values::Direction::RIGHT;
-        break;
     }
 }
 
-void Player::setDirection(Values::Direction x) {
+void Player::setDirection(const Values::Direction x) {
     m_direction = x;
 }
