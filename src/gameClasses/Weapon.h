@@ -13,7 +13,7 @@ class Weapon {
 
 private:
     Type m_type{ pistol };
-    int m_damage{ 1 };
+    int m_damage{};
     float m_positionX{};
     float m_positionY{};
     Values::Direction m_direction{ Values::Direction::RIGHT };
@@ -21,8 +21,8 @@ private:
 
 public:
     Weapon() = default;
-    Weapon(const float x, const float y, const Values::Direction direction)
-        : m_positionX(x), m_positionY(y), m_direction(direction) {}
+    Weapon(const float x, const float y, const Values::Direction direction, int damage = 1)
+        : m_positionX(x), m_positionY(y), m_direction(direction), m_damage(damage) {}
         
     void updateWindow(const Shader& shader) const;
     void move(GLfloat deltaTime);

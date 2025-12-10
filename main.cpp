@@ -337,10 +337,32 @@ void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& s
     static bool leftWasPressed = false;
     bool leftPressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
     if (leftPressed && !leftWasPressed) {
-        Weapon newAmmo{ vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), vecPlayers[0].getCurrentDirection() };
+        Weapon newAmmo{ vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), vecPlayers[0].getCurrentDirection()};
         vec.push_back(newAmmo);
     }
     leftWasPressed = leftPressed;
+
+    // Switching to the pistol
+    if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
+        if (!collisionAABB(vecPlayers[0], vecPlayers[1])) {
+            if (vecPlayers[0].getPosition('y') == Map::ground || vecPlayers[0].getOnGround() == true) {
+                vecPlayers[0].setPosition('u', deltaTime);
+                vecPlayers[0].move(vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), shader);
+                vecPlayers[0].setOnGround(false);
+            }
+        }
+    }
+
+    // Switching to the FireSword
+    if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
+        if (!collisionAABB(vecPlayers[0], vecPlayers[1])) {
+            if (vecPlayers[0].getPosition('y') == Map::ground || vecPlayers[0].getOnGround() == true) {
+                vecPlayers[0].setPosition('u', deltaTime);
+                vecPlayers[0].move(vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), shader);
+                vecPlayers[0].setOnGround(false);
+            }
+        }
+    }
 
 
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
