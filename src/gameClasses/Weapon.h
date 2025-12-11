@@ -6,13 +6,8 @@
 #define WEAPON_H
 
 class Weapon {
-    enum Type {
-        pistol,
-        fireSword,
-    };
-
 private:
-    Type m_type{ pistol };
+    Values::Type m_type{ Values::Type::pistol };
     int m_damage{};
     float m_positionX{};
     float m_positionY{};
@@ -28,7 +23,7 @@ public:
     void move(GLfloat deltaTime);
     [[nodiscard]] float getPosition(char c) const;
     [[nodiscard]] int getDamage() const { return m_damage; };
-    Type getWeaponType() const { return m_type; }
+    Values::Type getWeaponType() const { return m_type; }
     void setDamage(int x) { m_damage = x; }
 
 

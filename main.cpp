@@ -8,10 +8,11 @@
 #include "src/stb_image.h"
 #include "src/gameClasses/Player.h"
 #include "src/gameClasses/Weapon.h"
+#include "src/gameClasses/Pistol.h"
 #include <vector>
 
 // declaration
-void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec);
+void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec,  std::vector<Pistol>& pistol);
 void setVisible(float& x, char c);
 
 namespace Globals {
@@ -158,11 +159,14 @@ int main()
 
     Player player{};
     Player player2{0.5f, 0.5f, 0.2f, 0.2f};
+    Pistol newAmmo{5, player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection(), 10};
 
     std::vector<Weapon> vec{};
+    std::vector<Pistol> pistol{};
     std::vector<Player> players{};
     players.push_back(player);
     players.push_back(player2);
+    pistol.push_back(newAmmo);
 
 
 
@@ -240,7 +244,7 @@ int main()
 
         // input
         // -----
-        processInput(window, players, ourShader, deltaTime, vec);
+        processInput(window, players, ourShader, deltaTime, vec, pistol);
         
         // render
         // ------ rgba value/255 = answer in floats
@@ -302,7 +306,7 @@ int main()
     return 0;
 }
 
-void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec)
+void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec, std::vector<Pistol>& pistol)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
@@ -337,33 +341,34 @@ void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& s
     static bool leftWasPressed = false;
     bool leftPressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
     if (leftPressed && !leftWasPressed) {
-        Weapon newAmmo{ vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), vecPlayers[0].getCurrentDirection()};
-        vec.push_back(newAmmo);
+        if (vecPlayers[0].getCurrentWeapon() == Values::Type::pistol) {
+            if (pistol.at(0).getAmmo() != 0) {
+                Weapon newAmmo{ vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), vecPlayers[0].getCurrentDirection()};
+                vec.push_back(newAmmo);
+                pistol[0].setAmmo(pistol[0].getAmmo() - 1);
+                std::cout << "Ammo: " << pistol[0].getAmmo() << '\n';
+            }
+        }
+        if (vecPlayers[0].getCurrentWeapon() == Values::Type::fireSword) {
+            Weapon newAmmo{ vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), vecPlayers[0].getCurrentDirection()};
+            vec.push_back(newAmmo);
+        }
     }
     leftWasPressed = leftPressed;
 
     // Switching to the pistol
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
-        if (!collisionAABB(vecPlayers[0], vecPlayers[1])) {
-            if (vecPlayers[0].getPosition('y') == Map::ground || vecPlayers[0].getOnGround() == true) {
-                vecPlayers[0].setPosition('u', deltaTime);
-                vecPlayers[0].move(vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), shader);
-                vecPlayers[0].setOnGround(false);
-            }
-        }
+        vecPlayers[0].setCurrentWeapon( Values::Type::pistol );
     }
 
     // Switching to the FireSword
     if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
-        if (!collisionAABB(vecPlayers[0], vecPlayers[1])) {
-            if (vecPlayers[0].getPosition('y') == Map::ground || vecPlayers[0].getOnGround() == true) {
-                vecPlayers[0].setPosition('u', deltaTime);
-                vecPlayers[0].move(vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), shader);
-                vecPlayers[0].setOnGround(false);
-            }
-        }
+        vecPlayers[0].setCurrentWeapon( Values::Type::fireSword );
     }
 
+    if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
+        pistol[0].setAmmo(10);
+    }
 
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
         vecPlayers[0].setPosition('u', deltaTime);

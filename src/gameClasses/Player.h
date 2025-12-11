@@ -4,6 +4,8 @@
 #pragma once
 #include "../shader.h"
 
+class Weapon;
+
 namespace Values {
     constexpr float gravity { -9.81f };
     constexpr float jumpStrenght{ 4.0f };
@@ -13,6 +15,11 @@ namespace Values {
         DOWN,
         RIGHT,
         LEFT
+    };
+
+    enum Type {
+        pistol,
+        fireSword,
     };
 }
 
@@ -35,6 +42,8 @@ private:
     float m_height{};
     float m_width{};
     Values::Direction m_direction{ Values::Direction::RIGHT };
+    Values::Type m_currentWeapon{};
+    Weapon* m_weapon{};
 
 public:
     Player() = default;
@@ -57,7 +66,8 @@ public:
     [[nodiscard]] float getWidth() const { return m_width; }
     [[nodiscard]] Values::Direction getCurrentDirection() const { return m_direction; }
     void setDirection(Values::Direction x);
-
+    Values::Type getCurrentWeapon() const { return m_currentWeapon; }
+    void setCurrentWeapon(Values::Type weaponType) { m_currentWeapon = weaponType; }
 
     static Values::Direction getDirection(char c);
     friend bool collisionAABB(Player& o1, const Player& o2);
