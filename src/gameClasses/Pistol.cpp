@@ -3,4 +3,4 @@
 
 Pistol::Pistol(int ammo, const float x, const float y, const Values::Direction direction, int damage)
      : m_ammo(ammo),
-       Weapon{ x, y, direction, damage } {}
+       Weapon{ x, y, direction, damage, Values::Type::pistol } {}

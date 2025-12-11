@@ -1,3 +1,8 @@
 # GameEngine-cpp
 
-My First Game Engine!
+Game Engine!
+
+In this project:
+- LeaderBoard with PostgresSql
+- NetWork Connection
+- 2D world, graph Map

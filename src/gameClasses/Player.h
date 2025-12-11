@@ -9,6 +9,7 @@ class Weapon;
 namespace Values {
     constexpr float gravity { -9.81f };
     constexpr float jumpStrenght{ 4.0f };
+    static int weapon_id { 0 };
 
     enum Direction {
         UP,

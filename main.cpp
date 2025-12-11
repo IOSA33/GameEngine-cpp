@@ -10,6 +10,7 @@
 #include "src/gameClasses/Weapon.h"
 #include "src/gameClasses/Pistol.h"
 #include <vector>
+#include <algorithm>
 
 // declaration
 void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec,  std::vector<Pistol>& pistol);
@@ -275,11 +276,19 @@ int main()
 
         for (auto& obj : vec) {
             if (obj.getPosition('x') > Map::borderX_RIGHT || obj.getPosition('x') < Map::borderX_LEFT) {
-                vec.erase(vec.begin());
+                auto it = std::find_if(vec.begin(), vec.end(), [&](const Weapon& w) {
+                    return w.getId() == obj.getId();
+                });
+                vec.erase(it);
             }
             if (collisionAABB(players[1], obj)) {
-                vec.erase(vec.begin());
-                player.attack(players[1], obj.getDamage());
+                auto it = std::find_if(vec.begin(), vec.end(), [&](const Weapon& w) {
+                    return w.getId() == obj.getId();
+                });
+                vec.erase(it);
+                if (players[0].getCurrentWeapon() == Values::Type::pistol) {
+                    player.attack(players[1], pistol[0].getDamage());
+                }
             }
 
             obj.updateWindow(ourShader);
@@ -343,15 +352,17 @@ void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& s
     if (leftPressed && !leftWasPressed) {
         if (vecPlayers[0].getCurrentWeapon() == Values::Type::pistol) {
             if (pistol.at(0).getAmmo() != 0) {
-                Weapon newAmmo{ vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), vecPlayers[0].getCurrentDirection()};
+                Weapon newAmmo{ vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), vecPlayers[0].getCurrentDirection(), 1, Values::Type::pistol};
                 vec.push_back(newAmmo);
+                ++Values::weapon_id;
                 pistol[0].setAmmo(pistol[0].getAmmo() - 1);
                 std::cout << "Ammo: " << pistol[0].getAmmo() << '\n';
             }
         }
         if (vecPlayers[0].getCurrentWeapon() == Values::Type::fireSword) {
-            Weapon newAmmo{ vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), vecPlayers[0].getCurrentDirection()};
+            Weapon newAmmo{ vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), vecPlayers[0].getCurrentDirection(), 1, Values::Type::fireSword};
             vec.push_back(newAmmo);
+            ++Values::weapon_id;
         }
     }
     leftWasPressed = leftPressed;
@@ -367,7 +378,7 @@ void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& s
     }
 
     if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
-        pistol[0].setAmmo(10);
+        pistol[0].setAmmo(7);
     }
 
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {

@@ -16,12 +16,21 @@ void Weapon::updateWindow(const Shader& shader) const {
 }
 
 void Weapon::move(const GLfloat deltaTime) {
-    if (m_direction == Values::Direction::RIGHT) {
-        m_positionX += 0.1f * m_speed * deltaTime;
-    } else {
-        m_positionX -= 0.1f * m_speed * deltaTime;
+    if (m_type == Values::Type::pistol) {
+        if (m_direction == Values::Direction::RIGHT) {
+            m_positionX += 0.1f * m_speed * deltaTime;
+        } else {
+            m_positionX -= 0.1f * m_speed * deltaTime;
+        }
     }
 
+    if (m_type == Values::Type::fireSword) {
+        if (m_direction == Values::Direction::RIGHT) {
+            m_positionX = m_positionX;
+        } else {
+            m_positionX = m_positionX;
+        }
+    }
 }
 
 float Weapon::getPosition(char c) const {
