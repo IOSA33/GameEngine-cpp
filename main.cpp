@@ -9,6 +9,7 @@
 #include "src/gameClasses/Player.h"
 #include "src/gameClasses/Weapon.h"
 #include "src/gameClasses/Pistol.h"
+#include "src/gameClasses/FireSword.h"
 #include <vector>
 #include <algorithm>
 
@@ -86,6 +87,7 @@ int main()
     // ------------------------------------
     Shader ourShader("../src/shader.vs", "../src/shader.fs"); // you can name your shader files however you like
     Shader bgShader("../src/bg.vs", "../src/bg.fs");
+    Shader line("../src/line.vs", "../src/line.fs");
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float vertices[] = {
@@ -114,6 +116,12 @@ int main()
         1, 2, 3  // second triangle
     };
 
+    float verticesLine[] = {
+        // positions
+         1.0f,  1.0f, 0.0f,// top right
+         -1.0f, -1.0f, 0.0f// bottom right
+    };
+
     unsigned int VBO, VAO, EBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -139,6 +147,7 @@ int main()
 
     glBindVertexArray(0);
 
+
     unsigned int bgVBO, bgVAO, bgEBO;
     glGenVertexArrays(1, &bgVAO);
     glGenBuffers(1, &bgVBO);
@@ -157,18 +166,35 @@ int main()
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
+    glBindVertexArray(0);
+
+
+    unsigned int lineVBO, lineVAO;
+    glGenVertexArrays(1, &lineVAO);
+    glGenBuffers(1, &lineVBO);
+
+    glBindVertexArray(lineVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, lineVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(verticesLine), verticesLine, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)nullptr);
+    glEnableVertexAttribArray(0);
+    glBindVertexArray(0);
+
 
     Player player{};
     Player player2{0.5f, 0.5f, 0.2f, 0.2f};
-    Pistol newAmmo{5, player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection(), 10};
+    Pistol newAmmo{7, player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection(), 10};
+    FireSword newAmmo1{player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection(), 5};
 
     std::vector<Weapon> vec{};
     std::vector<Pistol> pistol{};
+    std::vector<FireSword> fire_sword_vec{};
     std::vector<Player> players{};
     players.push_back(player);
     players.push_back(player2);
     pistol.push_back(newAmmo);
-
+    fire_sword_vec.push_back(newAmmo1);
 
 
     // load and create a texture 
@@ -251,12 +277,18 @@ int main()
         // ------ rgba value/255 = answer in floats
         glClearColor(0.4f, 0.611f, 0.572f, 0.8f);
         glClear(GL_COLOR_BUFFER_BIT);
+        
+
 
         bgShader.use();
         glBindTexture(GL_TEXTURE_2D, texture2);
         glBindVertexArray(bgVAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         
+        line.use();
+        glBindVertexArray(lineVAO);
+        glDrawArrays(GL_LINES, 0, 2);
+
         // bind different Texture
         glBindTexture(GL_TEXTURE_2D, texture1);
 
@@ -288,6 +320,9 @@ int main()
                 vec.erase(it);
                 if (players[0].getCurrentWeapon() == Values::Type::pistol) {
                     player.attack(players[1], pistol[0].getDamage());
+                }
+                if (players[0].getCurrentWeapon() == Values::Type::fireSword) {
+                    player.attack(players[1], fire_sword_vec[0].getDamage());
                 }
             }
 
@@ -323,7 +358,7 @@ void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& s
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
         if (!collisionAABB(vecPlayers[0], vecPlayers[1])) {
             vecPlayers[0].setPosition('r', deltaTime);
-            vecPlayers[0].move(vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), shader);  
+            vecPlayers[0].move(vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), shader);
         }
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
