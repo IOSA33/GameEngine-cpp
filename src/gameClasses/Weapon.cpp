@@ -9,7 +9,7 @@
 void Weapon::updateWindow(const Shader& shader) const {
     auto transform = glm::mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(m_positionX, m_positionY, 0.0f));
-    transform = glm::scale(transform, glm::vec3(0.3f));
+    transform = glm::scale(transform, glm::vec3(0.4f));
     
     const unsigned int transformLoc = glGetUniformLocation(shader.ID, "transform");
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
@@ -19,6 +19,14 @@ void Weapon::move(const GLfloat deltaTime) {
     if (m_type == Values::Type::pistol) {
         if (m_direction == Values::Direction::RIGHT) {
             m_positionX += 0.1f * m_speed * deltaTime;
+        } else {
+            m_positionX -= 0.1f * m_speed * deltaTime;
+        }
+    }
+
+    if (m_type == Values::Type::mathLine) {
+        if (m_direction == Values::Direction::RIGHT) {
+            m_positionX += 0.001f * m_speed * deltaTime;
         } else {
             m_positionX -= 0.1f * m_speed * deltaTime;
         }

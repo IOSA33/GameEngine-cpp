@@ -21,6 +21,12 @@ namespace Values {
     enum Type {
         pistol,
         fireSword,
+        mathLine,
+    };
+
+    struct Position{
+        float positionX{ 0.0f };
+        float positionY{ 0.0f };
     };
 }
 

@@ -10,6 +10,7 @@
 #include "src/gameClasses/Weapon.h"
 #include "src/gameClasses/Pistol.h"
 #include "src/gameClasses/FireSword.h"
+#include "src/gameClasses/MathLine.h"
 #include <vector>
 #include <algorithm>
 
@@ -186,6 +187,9 @@ int main()
     Player player2{0.5f, 0.5f, 0.2f, 0.2f};
     Pistol newAmmo{7, player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection(), 10};
     FireSword newAmmo1{player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection(), 5};
+    MathLine lineTest{player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection(), 5};
+
+    lineTest.functionParser("y=2x+4");
 
     std::vector<Weapon> vec{};
     std::vector<Pistol> pistol{};
@@ -286,6 +290,8 @@ int main()
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         
         line.use();
+        lineTest.move(deltaTime);
+        lineTest.updateWindow(line);
         glBindVertexArray(lineVAO);
         glDrawArrays(GL_LINES, 0, 2);
 
@@ -385,6 +391,9 @@ void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& s
     static bool leftWasPressed = false;
     bool leftPressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
     if (leftPressed && !leftWasPressed) {
+
+
+
         if (vecPlayers[0].getCurrentWeapon() == Values::Type::pistol) {
             if (pistol.at(0).getAmmo() != 0) {
                 Weapon newAmmo{ vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), vecPlayers[0].getCurrentDirection(), 1, Values::Type::pistol};
