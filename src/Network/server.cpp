@@ -70,6 +70,7 @@ void ServerLoop(std::vector<Player>& players, Shader& shader) {
 	sockaddr_in client; // Use to hold the client information (port / ip address)
 	int clientLength = sizeof(client); // The size of the client information
 	PlayerData p;
+	PlayerData p_sender;
 
 	// Enter a loop
 	while (true)
@@ -90,14 +91,23 @@ void ServerLoop(std::vector<Player>& players, Shader& shader) {
 		// Convert from byte array to chars
 		inet_ntop(AF_INET, &client.sin_addr, clientIp, 256);
 
-		std::cout << "X=" << p.positionX << " Y=" << p.positionY << std::endl;
+		//std::cout << "X=" << p.positionX << " Y=" << p.positionY << std::endl;
 
 		// Testing coordinates for player two
 		players[1].setPositionHard('x', p.positionX);
 		players[1].setPositionHard('y', p.positionY);
         players[1].move(players[1].getPosition('x'), players[1].getPosition('y'), shader);
 		// Display the message / who sent it
-		cout << "Message recv from " << clientIp << endl;
+		//cout << "Message recv from " << clientIp << endl;
+
+
+		// TODO: Sending back players[0] to the client
+		p_sender.positionX = players[0].getPosition('x');
+    	p_sender.positionY = players[0].getPosition('y');
+		int sendOk = sendto(in, (char*)&p_sender, sizeof(p_sender), 0, (sockaddr*)&client, clientLength);
+		if (sendOk == SOCKET_ERROR) {
+	        cout << "That didn't work! " << WSAGetLastError() << endl;
+		}
 	}
 
 	// Close socket

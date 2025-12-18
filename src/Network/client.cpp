@@ -2,6 +2,7 @@
 #include <WS2tcpip.h>
 #include "client.h"
 #include "../gameClasses/Player.h"
+#include "../shader.h"
 
 // Include the Winsock library (lib) file
 #pragma comment (lib, "ws2_32.lib")
@@ -17,7 +18,7 @@ struct PlayerData {
 #pragma pack(pop)
 
 
-void Client(std::vector<Player>& players) {
+void Client(std::vector<Player>& players, Shader& shader) {
     ////////////////////////////////////////////////////////////
     // INITIALIZE WINSOCK
     ////////////////////////////////////////////////////////////
@@ -46,6 +47,7 @@ void Client(std::vector<Player>& players) {
 
     // Create a hint structure for the server
     sockaddr_in server;
+    int serverLength = sizeof(server);
     server.sin_family = AF_INET; // AF_INET = IPv4 addresses
     server.sin_port = htons(54000); // Little to big endian conversion
     inet_pton(AF_INET, "127.0.0.1", &server.sin_addr); // Convert from string to byte array
@@ -54,18 +56,27 @@ void Client(std::vector<Player>& players) {
     SOCKET out = socket(AF_INET, SOCK_DGRAM, 0);
 
     // Write out to that socket
-    string s("Test connect");
-
     PlayerData p;
     p.positionX = players[0].getPosition('x');
     p.positionY = players[0].getPosition('y');
 
     int sendOk = sendto(out, (char*)&p, sizeof(p), 0, (sockaddr*)&server, sizeof(server));
-
     if (sendOk == SOCKET_ERROR)
     {
         cout << "That didn't work! " << WSAGetLastError() << endl;
     }
+
+    sockaddr_in from;
+    int fromLen = sizeof(from);
+    PlayerData p_receiver;
+    int bytesIn = recvfrom(out, (char*)&p_receiver, sizeof(p_receiver), 0, (sockaddr*)&from, &fromLen);
+    if (bytesIn == SOCKET_ERROR)
+    {
+        cout << "Error receiving from client " << WSAGetLastError() << endl;
+    }
+    players[1].setPositionHard('x', p_receiver.positionX);
+    players[1].setPositionHard('y', p_receiver.positionY);
+    players[1].move(players[1].getPosition('x'), players[1].getPosition('y'), shader);
 
     // Close the socket
     closesocket(out);

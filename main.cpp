@@ -36,9 +36,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 // settings
-constexpr unsigned int SCR_WIDTH = 500;
-constexpr unsigned int SCR_HEIGHT = 500;
-//constexpr unsigned int SCR_HEIGHT = SCR_WIDTH * 9 / 16 + 60;
+constexpr unsigned int SCR_WIDTH = 700;
+constexpr unsigned int SCR_HEIGHT = SCR_WIDTH * 9 / 16 + 60;
 
 void setVisible(float& x, char c) {
 	const std::string op = "main/setVisible()";
@@ -297,7 +296,7 @@ int main(int argc, char* argv[])
         processInput(window, players, ourShader, deltaTime, vec, pistol, functions, Values::Input::textInput);
     
         if (!hostMode) {
-            Client(players);
+            Client(players, ourShader);
         }
     
         // render
