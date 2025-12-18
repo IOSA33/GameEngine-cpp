@@ -10,7 +10,7 @@
 void Weapon::updateWindow(const Shader& shader) const {
     auto transform = glm::mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(m_positionX, m_positionY, 0.0f));
-    // transform = glm::scale(transform, glm::vec3(0.5f));
+    transform = glm::scale(transform, glm::vec3(0.4f));
     
     const unsigned int transformLoc = glGetUniformLocation(shader.ID, "transform");
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
@@ -20,7 +20,7 @@ void Weapon::updateWindowLine(const Shader& shader, MathLine& line) const {
     auto transform = glm::mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(m_positionX, m_positionY, 0.0f));
     transform = glm::rotate(transform, line.calculateAngle(), glm::vec3(0.0f, 0.0f, 1.0f)); 
-    // transform = glm::scale(transform, glm::vec3(0.5f));
+    transform = glm::scale(transform, glm::vec3(line.getLength()));
     
     const unsigned int transformLoc = glGetUniformLocation(shader.ID, "transform");
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));

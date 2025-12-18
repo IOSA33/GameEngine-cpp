@@ -7,7 +7,8 @@ class MathLine : public Weapon {
     Values::Position m_point2{.positionX = -1.0f, .positionY = 0.0f};
     float m_centreX{};
     float m_centreY{};
-    float m_testK{ 0.0f};
+    float m_testK{ 0.0f };
+    float m_length{ 0.0f };
 
 public:
     MathLine() = default;
@@ -17,4 +18,5 @@ public:
     float calculateAngle();
     void functionParser(std::string_view func);
     float getCenter(char c);
+    float getLength() const {return m_length; }
 };

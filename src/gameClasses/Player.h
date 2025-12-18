@@ -28,6 +28,11 @@ namespace Values {
         float positionX{ 0.0f };
         float positionY{ 0.0f };
     };
+
+    struct Input{
+        inline static std::string inputText{};
+        inline static bool textInput { false };
+    };
 }
 
 namespace Map {

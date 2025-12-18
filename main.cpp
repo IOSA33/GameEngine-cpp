@@ -15,8 +15,9 @@
 #include <algorithm>
 
 // declaration
-void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec,  std::vector<Pistol>& pistol);
+void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec,  std::vector<Pistol>& pistol, std::vector<MathLine>& func, bool& textInput);
 void setVisible(float& x, char c);
+void character_callback(GLFWwindow* window, unsigned int codepoint);
 
 namespace Globals {
     float visible = 0.2f;
@@ -188,22 +189,16 @@ int main()
     Player player2{0.5f, 0.5f, 0.2f, 0.2f};
     Pistol newAmmo{7, player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection(), 10};
     FireSword newAmmo1{player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection(), 5};
-    MathLine lineTest{player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection(), 5};
-    MathLine lineTest1{player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection(), 5};
-
-    lineTest.functionParser("y=2x+0.8");
-    lineTest.setPosition('x', lineTest.getCenter('x'));
-    lineTest.setPosition('y', lineTest.getCenter('y'));
 
     std::vector<Weapon> vec{};
     std::vector<Pistol> pistol{};
     std::vector<FireSword> fire_sword_vec{};
     std::vector<Player> players{};
+    std::vector<MathLine> functions{};
     players.push_back(player);
     players.push_back(player2);
     pistol.push_back(newAmmo);
     fire_sword_vec.push_back(newAmmo1);
-
 
     // load and create a texture 
     // -------------------------
@@ -268,6 +263,8 @@ int main()
     GLfloat deltaTime = 0.0f;
     GLfloat lastFrame = 0.0f;
 
+    glfwSetCharCallback(window, character_callback);
+
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -279,31 +276,24 @@ int main()
 
         // input
         // -----
-        processInput(window, players, ourShader, deltaTime, vec, pistol);
+        processInput(window, players, ourShader, deltaTime, vec, pistol, functions, Values::Input::textInput);
         
         // render
         // ------ rgba value/255 = answer in floats
         glClearColor(0.4f, 0.611f, 0.572f, 0.8f);
         glClear(GL_COLOR_BUFFER_BIT);
-        
-
 
         bgShader.use();
         glBindTexture(GL_TEXTURE_2D, texture2);
         glBindVertexArray(bgVAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        
-        line.use();
-        lineTest.updateWindowLine(line, lineTest);
-        // lineTest.move(deltaTime);
-        glBindVertexArray(lineVAO);
-        glDrawArrays(GL_LINES, 0, 2);
 
-        line.use();
-        lineTest1.updateWindow(line);
-        // lineTest.move(deltaTime);
-        glBindVertexArray(lineVAO);
-        glDrawArrays(GL_LINES, 0, 2);
+        for (auto& obj: functions) {
+            line.use();
+            obj.updateWindowLine(line, obj);
+            glBindVertexArray(lineVAO);
+            glDrawArrays(GL_LINES, 0, 2);  
+        }
 
         // bind different Texture
         glBindTexture(GL_TEXTURE_2D, texture1);
@@ -366,31 +356,31 @@ int main()
     return 0;
 }
 
-void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec, std::vector<Pistol>& pistol)
+void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec, std::vector<Pistol>& pistol, std::vector<MathLine>& func, bool& textInput)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        if (!collisionAABB(vecPlayers[0], vecPlayers[1])) {
+        if (!collisionAABB(vecPlayers[0], vecPlayers[1]) && textInput == false) {
             vecPlayers[0].setPosition('r', deltaTime);
             vecPlayers[0].move(vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), shader);
         }
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        if (!collisionAABB(vecPlayers[0], vecPlayers[1])) {
+        if (!collisionAABB(vecPlayers[0], vecPlayers[1]) && textInput == false) {
             vecPlayers[0].setPosition('l', deltaTime);
             vecPlayers[0].move(vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), shader);
         }
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        if (!collisionAABB(vecPlayers[0], vecPlayers[1])) {
+        if (!collisionAABB(vecPlayers[0], vecPlayers[1]) && textInput == false) {
             vecPlayers[0].setPosition('d', deltaTime);
             vecPlayers[0].move(vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), shader);
         }
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        if (!collisionAABB(vecPlayers[0], vecPlayers[1])) {
+        if (!collisionAABB(vecPlayers[0], vecPlayers[1]) && textInput == false) {
             if (vecPlayers[0].getPosition('y') == Map::ground || vecPlayers[0].getOnGround() == true) {
                 vecPlayers[0].setPosition('u', deltaTime);
                 vecPlayers[0].move(vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), shader);
@@ -400,10 +390,7 @@ void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& s
     }
     static bool leftWasPressed = false;
     bool leftPressed = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
-    if (leftPressed && !leftWasPressed) {
-
-
-
+    if (leftPressed && !leftWasPressed && textInput == false) {
         if (vecPlayers[0].getCurrentWeapon() == Values::Type::pistol) {
             if (pistol.at(0).getAmmo() != 0) {
                 Weapon newAmmo{ vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), vecPlayers[0].getCurrentDirection(), 1, Values::Type::pistol};
@@ -423,20 +410,50 @@ void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& s
 
     // Switching to the pistol
     if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS) {
-        vecPlayers[0].setCurrentWeapon( Values::Type::pistol );
+        if (textInput == false)
+            vecPlayers[0].setCurrentWeapon( Values::Type::pistol );
     }
 
     // Switching to the FireSword
     if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS) {
-        vecPlayers[0].setCurrentWeapon( Values::Type::fireSword );
+        if (textInput == false)
+            vecPlayers[0].setCurrentWeapon( Values::Type::fireSword );
     }
 
     if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS) {
-        pistol[0].setAmmo(7);
+        if (textInput == false)
+            pistol[0].setAmmo(7);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+        textInput = true;        
+    }
+    
+    if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
+        if (!Values::Input::inputText.empty()) {
+            Values::Input::textInput = false;
+            MathLine lineTest{vecPlayers[0].getPosition('x'), vecPlayers[0].getPosition('y'), vecPlayers[0].getCurrentDirection(), 5};
+            lineTest.functionParser(Values::Input::inputText);
+            lineTest.setPosition('x', lineTest.getCenter('x'));
+            lineTest.setPosition('y', lineTest.getCenter('y'));
+            func.push_back(lineTest);
+            Values::Input::inputText.clear(); 
+        }
     }
 
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS) {
-        vecPlayers[0].setPosition('u', deltaTime);
+        if (textInput == false)
+            vecPlayers[0].setPosition('u', deltaTime);
     }
 }
 
+void character_callback(GLFWwindow* window, unsigned int codepoint) {
+    if (Values::Input::textInput == true) {
+        char c { static_cast<char>(codepoint) };
+        Values::Input::inputText.push_back(c);
+        for (const auto& i: Values::Input::inputText) {
+            std::cout << i;
+        }
+        std::cout << std::endl;
+    }
+}

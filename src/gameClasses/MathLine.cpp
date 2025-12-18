@@ -18,10 +18,8 @@ float MathLine::getCenter(char c) {
     switch (c)
     {
     case 'x':
-        std::cout << "Value x:" << m_centreX;
         return m_centreX;
     case 'y':
-        std::cout << "Value y:" << m_centreY;
         return m_centreY;
     default:
         std::cout << "MathLine::getCentre, ERROR, returned 0.0f" << std::endl;
@@ -31,10 +29,6 @@ float MathLine::getCenter(char c) {
 
 
 float MathLine::calculateAngle() {
-    // Length
-    float dx = m_point2.positionX - m_point1.positionX;
-    float dy = m_point2.positionY - m_point1.positionY;
-    float length = std::sqrt(dx*dx + dy*dy);
 
     // Angle
     float myAngle = std::atan((m_testK-1) / (1+1*m_testK));
@@ -46,18 +40,20 @@ float MathLine::calculateAngle() {
 void MathLine::functionParser(std::string_view func) {
     std::string left {};
     std::string right {};
-
+    std::string func1 { func }; 
     float delim{ 10.0f };
-    assert(func.size() > 3);
+    assert(func1.size() > 3);
 
     bool equal{false};
-    for (size_t i = 0; i < func.size(); ++i) {
+    for (size_t i = 0; i < func1.size(); ++i) {
+        if (func1[i] == '=') {
+            equal = true;
+            continue;   
+        }     
         if (!equal)
-            left.push_back(func[i]);
+            left.push_back(func1[i]);
         else
-            right.push_back(func[i]);
-        if (func[i] == '=')
-            equal = true;    
+            right.push_back(func1[i]);
     }
 
     bool foundPlus{ false };
@@ -98,7 +94,14 @@ void MathLine::functionParser(std::string_view func) {
     m_centreX = (m_point1.positionX + m_point2.positionX) / 2.0f;
     m_centreY = (m_point1.positionY + m_point2.positionY) / 2.0f;
 
+
+    // Length
+    float dx = m_point2.positionX - m_point1.positionX;
+    float dy = m_point2.positionY - m_point1.positionY;
+    m_length = std::sqrt(dx*dx + dy*dy);
+
     std::cout << m_point1.positionX << ":" << m_point1.positionY << '\n';
     std::cout << m_point2.positionX << ":" << m_point2.positionY << '\n';
-    std::cout << m_centreX << ":" << m_centreY << '\n';
+    std::cout << "Value centreX: " << m_centreX << " ---- " << "Value centreY: " << m_centreY << '\n';
+    std::cout << "Length: " << m_length << '\n';
 }
