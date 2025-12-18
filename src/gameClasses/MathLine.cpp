@@ -27,16 +27,12 @@ float MathLine::getCenter(char c) {
     }
 }
 
-
 float MathLine::calculateAngle() {
-
-    // Angle
-    float myAngle = std::atan((m_testK-1) / (1+1*m_testK));
-    return myAngle;
+    float angle = std::atan((m_testK-1) / (1+1*m_testK));
+    return angle;
 }
 
-
-// Simple function line parser ex. y = 12x + 23 or y = 12x + 0.8
+// Simple function line parser ex. y = -12x + 23 or y = 12x + 0.8
 void MathLine::functionParser(std::string_view func) {
     std::string left {};
     std::string right {};

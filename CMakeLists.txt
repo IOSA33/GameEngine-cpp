@@ -22,7 +22,8 @@ add_executable(app main.cpp
                    src/gameClasses/Player.cpp
                    src/gameClasses/Weapon.cpp
                    src/gameClasses/Pistol.cpp
-                   src/gameClasses/FireSword.cpp)
+                   src/gameClasses/FireSword.cpp
+                   src/gameClasses/MathLine.cpp)
 
 # GLFW from MSYS2/MinGW64
 find_package(PkgConfig REQUIRED)
