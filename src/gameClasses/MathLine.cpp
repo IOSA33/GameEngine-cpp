@@ -1,6 +1,7 @@
 #include "MathLine.h"
 #include <string>
 #include <assert.h>
+#include <cmath>
 
 MathLine::MathLine(Values::Position point1, Values::Position point2, 
     const float x, const float y, 
@@ -13,7 +14,35 @@ MathLine::MathLine(const float x, const float y,
     : Weapon(x, y, direction, damage, Values::mathLine) {}
 
 
-// Simple function line parser ex. y = 12x + 23
+float MathLine::getCenter(char c) {
+    switch (c)
+    {
+    case 'x':
+        std::cout << "Value x:" << m_centreX;
+        return m_centreX;
+    case 'y':
+        std::cout << "Value y:" << m_centreY;
+        return m_centreY;
+    default:
+        std::cout << "MathLine::getCentre, ERROR, returned 0.0f" << std::endl;
+        return 0.0f;
+    }
+}
+
+
+float MathLine::calculateAngle() {
+    // Length
+    float dx = m_point2.positionX - m_point1.positionX;
+    float dy = m_point2.positionY - m_point1.positionY;
+    float length = std::sqrt(dx*dx + dy*dy);
+
+    // Angle
+    float myAngle = std::atan((m_testK-1) / (1+1*m_testK));
+    return myAngle;
+}
+
+
+// Simple function line parser ex. y = 12x + 23 or y = 12x + 0.8
 void MathLine::functionParser(std::string_view func) {
     std::string left {};
     std::string right {};
@@ -47,17 +76,29 @@ void MathLine::functionParser(std::string_view func) {
                 }
             }
         } else {
-            beforeXbool = true;
+            beforeXbool = true; 
             beforeX.push_back(right[i]);
+            m_testK += std::stof(beforeX);
+            std::cout << "k of the function is: " << m_testK << std::endl;
             m_point1.positionY += std::stof(beforeX) * 1;
             m_point2.positionY += std::stof(beforeX) * (-1);
             beforeX.clear();
         }
     }
 
-    m_point1.positionY += std::stof(beforeX)/delim;
-    m_point2.positionY += std::stof(beforeX)/delim;
+    if (std::stof(beforeX) < 1.0f) {
+        m_point1.positionY += std::stof(beforeX);
+        m_point2.positionY += std::stof(beforeX);
+    } else {
+        m_point1.positionY += std::stof(beforeX)/delim;
+        m_point2.positionY += std::stof(beforeX)/delim;
+    }
+
+    // Centre
+    m_centreX = (m_point1.positionX + m_point2.positionX) / 2.0f;
+    m_centreY = (m_point1.positionY + m_point2.positionY) / 2.0f;
 
     std::cout << m_point1.positionX << ":" << m_point1.positionY << '\n';
     std::cout << m_point2.positionX << ":" << m_point2.positionY << '\n';
+    std::cout << m_centreX << ":" << m_centreY << '\n';
 }

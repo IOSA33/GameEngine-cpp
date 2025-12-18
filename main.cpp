@@ -33,7 +33,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 // settings
 constexpr unsigned int SCR_WIDTH = 900;
-constexpr unsigned int SCR_HEIGHT = SCR_WIDTH * 9 / 16 + 60;
+constexpr unsigned int SCR_HEIGHT = 900;
+//constexpr unsigned int SCR_HEIGHT = SCR_WIDTH * 9 / 16 + 60;
 
 void setVisible(float& x, char c) {
 	const std::string op = "main/setVisible()";
@@ -188,8 +189,11 @@ int main()
     Pistol newAmmo{7, player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection(), 10};
     FireSword newAmmo1{player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection(), 5};
     MathLine lineTest{player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection(), 5};
+    MathLine lineTest1{player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection(), 5};
 
-    lineTest.functionParser("y=2x+4");
+    lineTest.functionParser("y=2x+0.8");
+    lineTest.setPosition('x', lineTest.getCenter('x'));
+    lineTest.setPosition('y', lineTest.getCenter('y'));
 
     std::vector<Weapon> vec{};
     std::vector<Pistol> pistol{};
@@ -290,8 +294,14 @@ int main()
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         
         line.use();
-        lineTest.move(deltaTime);
-        lineTest.updateWindow(line);
+        lineTest.updateWindowLine(line, lineTest);
+        // lineTest.move(deltaTime);
+        glBindVertexArray(lineVAO);
+        glDrawArrays(GL_LINES, 0, 2);
+
+        line.use();
+        lineTest1.updateWindow(line);
+        // lineTest.move(deltaTime);
         glBindVertexArray(lineVAO);
         glDrawArrays(GL_LINES, 0, 2);
 

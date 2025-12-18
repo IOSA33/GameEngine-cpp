@@ -2,6 +2,8 @@
 #include "../shader.h"
 #include "Player.h"
 
+class MathLine;
+
 #ifndef WEAPON_H
 #define WEAPON_H
 
@@ -22,8 +24,10 @@ public:
 
     int getId() const { return m_id; }
     void updateWindow(const Shader& shader) const;
+    void updateWindowLine(const Shader& shader, MathLine& line) const;
     void move(GLfloat deltaTime);
     [[nodiscard]] float getPosition(char c) const;
+    void setPosition(char c, float value);
     [[nodiscard]] int getDamage() const { return m_damage; };
     Values::Type getWeaponType() const { return m_type; }
     void setDamage(int x) { m_damage = x; }
