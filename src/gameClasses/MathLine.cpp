@@ -32,7 +32,7 @@ float MathLine::calculateAngle() {
     return angle;
 }
 
-// Simple function line parser ex. y = -12x + 23 or y = 12x + 0.8
+// Simple function line parser ex. y = -12x + 23 or y = 12x - 0.8
 void MathLine::functionParser(std::string_view func) {
     std::string left {};
     std::string right {};
@@ -53,6 +53,7 @@ void MathLine::functionParser(std::string_view func) {
     }
 
     bool foundPlus{ false };
+    bool foundMinus{ false };
     bool beforeXbool{ false };
     std::string beforeX{};
     for (size_t i = 0; i < right.size(); ++i) {
@@ -63,8 +64,14 @@ void MathLine::functionParser(std::string_view func) {
                 if(foundPlus) {
                     beforeX.push_back(right[i]);
                 }
+                if(foundMinus) {
+                    beforeX.push_back(right[i]);
+                }
                 if (right[i] == '+') {
                     foundPlus = true;
+                }
+                if (right[i] == '-') {
+                    foundMinus = true;
                 }
             }
         } else {
@@ -78,18 +85,27 @@ void MathLine::functionParser(std::string_view func) {
         }
     }
 
-    if (std::stof(beforeX) < 1.0f) {
-        m_point1.positionY += std::stof(beforeX);
-        m_point2.positionY += std::stof(beforeX);
-    } else {
-        m_point1.positionY += std::stof(beforeX)/delim;
-        m_point2.positionY += std::stof(beforeX)/delim;
+    if (foundPlus) {
+        if (std::stof(beforeX) < 1.0f ) {
+            m_point1.positionY += std::stof(beforeX);
+            m_point2.positionY += std::stof(beforeX);
+        } else {
+            m_point1.positionY += std::stof(beforeX)/delim;
+            m_point2.positionY += std::stof(beforeX)/delim;
+        }
+    } else if (foundMinus) {
+        if (std::stof(beforeX) < 1.0f ) {
+            m_point1.positionY -= std::stof(beforeX);
+            m_point2.positionY -= std::stof(beforeX);
+        } else {
+            m_point1.positionY -= std::stof(beforeX)/delim;
+            m_point2.positionY -= std::stof(beforeX)/delim;
+        }
     }
 
     // Centre
     m_centreX = (m_point1.positionX + m_point2.positionX) / 2.0f;
     m_centreY = (m_point1.positionY + m_point2.positionY) / 2.0f;
-
 
     // Length
     float dx = m_point2.positionX - m_point1.positionX;

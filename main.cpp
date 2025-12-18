@@ -13,6 +13,7 @@
 #include "src/gameClasses/MathLine.h"
 #include <vector>
 #include <algorithm>
+#include <thread>
 
 // declaration
 void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec,  std::vector<Pistol>& pistol, std::vector<MathLine>& func, bool& textInput);
@@ -57,7 +58,11 @@ void setVisible(float& x, char c) {
 	}
 }
 
-int main()
+bool hostMode = false;
+bool serverRunning = true;
+
+// Main idea is that one player is a host and the second is a client
+int main(int args, int* argv[])
 {
     // glfw: initialize and configure
     // ------------------------------
