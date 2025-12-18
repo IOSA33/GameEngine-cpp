@@ -36,8 +36,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 // settings
-constexpr unsigned int SCR_WIDTH = 900;
-constexpr unsigned int SCR_HEIGHT = 900;
+constexpr unsigned int SCR_WIDTH = 500;
+constexpr unsigned int SCR_HEIGHT = 500;
 //constexpr unsigned int SCR_HEIGHT = SCR_WIDTH * 9 / 16 + 60;
 
 void setVisible(float& x, char c) {
@@ -68,13 +68,6 @@ int main(int argc, char* argv[])
 {
     if (argc > 1 && strcmp(argv[1], "host") == 0)
         hostMode = true;
-
-    if (hostMode)
-    {
-        std::thread serverThread(ServerLoop);
-        serverThread.detach(); 
-    }
-
 
     // glfw: initialize and configure
     // ------------------------------
@@ -217,6 +210,12 @@ int main(int argc, char* argv[])
     pistol.push_back(newAmmo);
     fire_sword_vec.push_back(newAmmo1);
 
+    if (hostMode)
+    {
+        std::thread serverThread(ServerLoop, std::ref(players), std::ref(ourShader));
+        serverThread.detach(); 
+    }
+
     // load and create a texture 
     // -------------------------
     unsigned int texture1, texture2;
@@ -280,9 +279,6 @@ int main(int argc, char* argv[])
     GLfloat deltaTime = 0.0f;
     GLfloat lastFrame = 0.0f;
 
-    if (!hostMode) {
-        Client();
-    }
 
     glfwSetCharCallback(window, character_callback);
 
@@ -290,6 +286,7 @@ int main(int argc, char* argv[])
     // -----------
     while (!glfwWindowShouldClose(window))
     {
+
         // Calculate delta time
         GLfloat currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
@@ -298,7 +295,11 @@ int main(int argc, char* argv[])
         // input
         // -----
         processInput(window, players, ourShader, deltaTime, vec, pistol, functions, Values::Input::textInput);
-        
+    
+        if (!hostMode) {
+            Client(players);
+        }
+    
         // render
         // ------ rgba value/255 = answer in floats
         glClearColor(0.4f, 0.611f, 0.572f, 0.8f);

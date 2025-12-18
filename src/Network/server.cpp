@@ -4,14 +4,23 @@
 #include <winsock2.h>
 #include <stdio.h>
 #include "server.h"
+#include "../gameClasses/Player.h"
+#include "../shader.h"
 
 // Include the Winsock library (lib) file
 #pragma comment (lib, "ws2_32.lib")
 
 using namespace std;
 
+#pragma pack(push, 1)
+struct PlayerData {
+    float positionX;
+    float positionY;
+};
+#pragma pack(pop)
+
 // Main entry point into the server
-void ServerLoop() {
+void ServerLoop(std::vector<Player>& players, Shader& shader) {
 	////////////////////////////////////////////////////////////
 	// INITIALIZE WINSOCK
 	////////////////////////////////////////////////////////////
@@ -60,17 +69,14 @@ void ServerLoop() {
 
 	sockaddr_in client; // Use to hold the client information (port / ip address)
 	int clientLength = sizeof(client); // The size of the client information
-
-	char buf[1024];
+	PlayerData p;
 
 	// Enter a loop
 	while (true)
 	{
 		ZeroMemory(&client, clientLength); // Clear the client structure
-		ZeroMemory(buf, 1024); // Clear the receive buffer
-
 		// Wait for message
-		int bytesIn = recvfrom(in, buf, 1024, 0, (sockaddr*)&client, &clientLength);
+		int bytesIn = recvfrom(in, (char*)&p, sizeof(p), 0, (sockaddr*)&client, &clientLength);
 		if (bytesIn == SOCKET_ERROR)
 		{
 			cout << "Error receiving from client " << WSAGetLastError() << endl;
@@ -84,8 +90,14 @@ void ServerLoop() {
 		// Convert from byte array to chars
 		inet_ntop(AF_INET, &client.sin_addr, clientIp, 256);
 
+		std::cout << "X=" << p.positionX << " Y=" << p.positionY << std::endl;
+
+		// Testing coordinates for player two
+		players[1].setPositionHard('x', p.positionX);
+		players[1].setPositionHard('y', p.positionY);
+        players[1].move(players[1].getPosition('x'), players[1].getPosition('y'), shader);
 		// Display the message / who sent it
-		cout << "Message recv from " << clientIp << " : " << buf << endl;
+		cout << "Message recv from " << clientIp << endl;
 	}
 
 	// Close socket

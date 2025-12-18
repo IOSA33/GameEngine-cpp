@@ -1,6 +1,7 @@
 #include <iostream>
 #include <WS2tcpip.h>
 #include "client.h"
+#include "../gameClasses/Player.h"
 
 // Include the Winsock library (lib) file
 #pragma comment (lib, "ws2_32.lib")
@@ -8,7 +9,15 @@
 // Saves us from typing std::cout << etc. etc. etc.
 using namespace std;
 
-void Client() {
+#pragma pack(push, 1)
+struct PlayerData {
+    float positionX;
+    float positionY;
+};
+#pragma pack(pop)
+
+
+void Client(std::vector<Player>& players) {
     ////////////////////////////////////////////////////////////
     // INITIALIZE WINSOCK
     ////////////////////////////////////////////////////////////
@@ -46,7 +55,12 @@ void Client() {
 
     // Write out to that socket
     string s("Test connect");
-    int sendOk = sendto(out, s.c_str(), s.size() + 1, 0, (sockaddr*)&server, sizeof(server));
+
+    PlayerData p;
+    p.positionX = players[0].getPosition('x');
+    p.positionY = players[0].getPosition('y');
+
+    int sendOk = sendto(out, (char*)&p, sizeof(p), 0, (sockaddr*)&server, sizeof(server));
 
     if (sendOk == SOCKET_ERROR)
     {
