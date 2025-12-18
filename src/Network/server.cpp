@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <winsock2.h>
 #include <stdio.h>
+#include "server.h"
 
 // Include the Winsock library (lib) file
 #pragma comment (lib, "ws2_32.lib")

@@ -14,6 +14,8 @@
 #include <vector>
 #include <algorithm>
 #include <thread>
+#include "src/Network/server.h"
+#include "src/Network/client.h"
 
 // declaration
 void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec,  std::vector<Pistol>& pistol, std::vector<MathLine>& func, bool& textInput);
@@ -62,8 +64,18 @@ bool hostMode = false;
 bool serverRunning = true;
 
 // Main idea is that one player is a host and the second is a client
-int main(int args, int* argv[])
+int main(int argc, char* argv[])
 {
+    if (argc > 1 && strcmp(argv[1], "host") == 0)
+        hostMode = true;
+
+    if (hostMode)
+    {
+        std::thread serverThread(ServerLoop);
+        serverThread.detach(); 
+    }
+
+
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -267,6 +279,10 @@ int main(int args, int* argv[])
     // DeltaTime variables
     GLfloat deltaTime = 0.0f;
     GLfloat lastFrame = 0.0f;
+
+    if (!hostMode) {
+        Client();
+    }
 
     glfwSetCharCallback(window, character_callback);
 
