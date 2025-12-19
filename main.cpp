@@ -211,7 +211,7 @@ int main(int argc, char* argv[])
 
     if (hostMode)
     {
-        std::thread serverThread(ServerLoop, std::ref(players), std::ref(ourShader));
+        std::thread serverThread(ServerLoop, std::ref(players), std::ref(vec), std::ref(ourShader));
         serverThread.detach(); 
     }
 
@@ -296,7 +296,7 @@ int main(int argc, char* argv[])
         processInput(window, players, ourShader, deltaTime, vec, pistol, functions, Values::Input::textInput);
     
         if (!hostMode) {
-            Client(players, ourShader);
+            Client(players, vec, ourShader);
         }
     
         // render
@@ -323,7 +323,7 @@ int main(int argc, char* argv[])
         for (auto& obj: players) {
             ourShader.use();
             ourShader.setFloat("visible", Globals::visible);
-            if (!collisionAABB(players[0], players[1])) {
+            if (!collisionAABB(players[0], players[1]) && !collisionAABB(players[1], players[0])) {
                 obj.gravity(deltaTime);
             }
 

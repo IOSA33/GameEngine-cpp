@@ -23,7 +23,9 @@ add_executable(app main.cpp
                    src/gameClasses/Weapon.cpp
                    src/gameClasses/Pistol.cpp
                    src/gameClasses/FireSword.cpp
-                   src/gameClasses/MathLine.cpp)
+                   src/gameClasses/MathLine.cpp
+                   src/Network/server.cpp
+                   src/Network/client.cpp)
 
 # GLFW from MSYS2/MinGW64
 find_package(PkgConfig REQUIRED)
@@ -37,4 +39,5 @@ target_link_libraries(app
         glad
         ${GLFW_LIBRARIES}
         opengl32
+        ws2_32
 )

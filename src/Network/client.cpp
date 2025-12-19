@@ -2,6 +2,7 @@
 #include <WS2tcpip.h>
 #include "client.h"
 #include "../gameClasses/Player.h"
+#include "../gameClasses/Weapon.h"
 #include "../shader.h"
 
 // Include the Winsock library (lib) file
@@ -12,13 +13,14 @@ using namespace std;
 
 #pragma pack(push, 1)
 struct PlayerData {
+    std::vector<Weapon> vec;
     float positionX;
     float positionY;
 };
 #pragma pack(pop)
 
 
-void Client(std::vector<Player>& players, Shader& shader) {
+void Client(std::vector<Player>& players, std::vector<Weapon>& weapons, Shader& shader) {
     ////////////////////////////////////////////////////////////
     // INITIALIZE WINSOCK
     ////////////////////////////////////////////////////////////
@@ -59,6 +61,7 @@ void Client(std::vector<Player>& players, Shader& shader) {
     PlayerData p;
     p.positionX = players[0].getPosition('x');
     p.positionY = players[0].getPosition('y');
+    p.vec = weapons;
 
     int sendOk = sendto(out, (char*)&p, sizeof(p), 0, (sockaddr*)&server, sizeof(server));
     if (sendOk == SOCKET_ERROR)

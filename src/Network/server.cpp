@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "server.h"
 #include "../gameClasses/Player.h"
+#include "../gameClasses/Weapon.h"
 #include "../shader.h"
 
 // Include the Winsock library (lib) file
@@ -14,13 +15,14 @@ using namespace std;
 
 #pragma pack(push, 1)
 struct PlayerData {
+	std::vector<Weapon> vec;
     float positionX;
     float positionY;
 };
 #pragma pack(pop)
 
 // Main entry point into the server
-void ServerLoop(std::vector<Player>& players, Shader& shader) {
+void ServerLoop(std::vector<Player>& players, std::vector<Weapon>& weapons, Shader& shader) {
 	////////////////////////////////////////////////////////////
 	// INITIALIZE WINSOCK
 	////////////////////////////////////////////////////////////
@@ -97,6 +99,7 @@ void ServerLoop(std::vector<Player>& players, Shader& shader) {
 		players[1].setPositionHard('x', p.positionX);
 		players[1].setPositionHard('y', p.positionY);
         players[1].move(players[1].getPosition('x'), players[1].getPosition('y'), shader);
+		//weapons.insert(weapons.end(), p.vec.begin(), p.vec.end());
 		// Display the message / who sent it
 		//cout << "Message recv from " << clientIp << endl;
 
