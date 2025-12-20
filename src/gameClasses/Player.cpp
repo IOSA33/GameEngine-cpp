@@ -140,19 +140,15 @@ bool collisionAABB(Player& o1, Player& o2) {
     return false;
 }
 
-void Player::attack(Player& player, const int damage) {
-    if (player.m_hp > 0) {
-        player.setHp(player.getHp() - damage);
-        std::cout << "Enemy Player has hp left: " << player.getHp() << '\n';
+template<typename N>
+void Player::attack(N& entity, const int damage) {
+    if (entity.m_hp > 0) {
+        entity.setHp(entity.getHp() - damage);
+        std::cout << "Enemy Player has hp left: " << entity.getHp() << '\n';
     } 
 }
-
-void Player::attack(Enemy& enemy, const int damage) {
-    if (enemy.m_hp > 0) {
-        enemy.setHp(enemy.getHp() - damage);
-        std::cout << "Enemy Bot has hp left: " << enemy.getHp() << '\n';
-    } 
-}
+template void Player::attack<Enemy>(Enemy&, const int);
+template void Player::attack<Player>(Player&, const int);
 
 Values::Direction Player::getDirection(const char c) {
     const std::string op = "Player.cpp/getDirection()" ;

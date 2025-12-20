@@ -43,6 +43,7 @@ namespace Map {
 
 class Player {
 private:
+    int m_id{};
     int m_hp{ 100 };
     float m_positionX{ 0.0f };
     float m_positionY{ 0.0f };
@@ -69,8 +70,8 @@ public:
     void updateScreen(const Shader& shader) const;
     void gravity(float deltaTime);
     void setVelocity(const float x) { m_velocity = x; }
-    void attack(Player& player, int damage);
-    void attack(Enemy& enemy, const int damage);
+    template<typename N>
+    void attack(N& player, int damage);
     void setHp(const int x) { m_hp = x; }
     [[nodiscard]] int getHp() const { return m_hp; }
     [[nodiscard]] bool getOnGround() const { return m_onGround; }

@@ -38,7 +38,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 // settings
-constexpr unsigned int SCR_WIDTH = 700;
+constexpr unsigned int SCR_WIDTH = 900;
 constexpr unsigned int SCR_HEIGHT = SCR_WIDTH * 9 / 16 + 60;
 
 void setVisible(float& x, char c) {
@@ -106,10 +106,10 @@ int main(int argc, char* argv[])
     // ------------------------------------------------------------------
     float vertices[] = {
         // positions          // colors           // texture coords
-        0.1f,  0.1f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-        0.1f, -0.1f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-        -0.1f, -0.1f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-        -0.1f,  0.1f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+        0.09f,  0.09f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+        0.09f, -0.09f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
+        -0.09f, -0.09f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
+        -0.09f,  0.09f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
     };
 
     unsigned int indices[] = {  
@@ -238,7 +238,7 @@ int main(int argc, char* argv[])
     // load image, create texture and generate mipmaps
     int width, height, nrChannels;
     stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-    unsigned char *data = stbi_load("../src/container.png", &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load("../src/Images/container.png", &width, &height, &nrChannels, 0);
     if (data)
     {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -261,7 +261,7 @@ int main(int argc, char* argv[])
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     int width1, height1, nrChannels1;
     // load image, create texture and generate mipmaps
-    data = stbi_load("../src/background.jpg", &width1, &height1, &nrChannels1, 0);
+    data = stbi_load("../src/Images/background.jpg", &width1, &height1, &nrChannels1, 0);
     if (data)
     {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width1, height1, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
