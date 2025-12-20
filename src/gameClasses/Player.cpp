@@ -100,7 +100,7 @@ void Player::setPositionHard(const char c, const float a) {
     }
 }
 
-bool collisionAABB(Player& o1, const Player& o2) {
+bool collisionAABB(Player& o1, Player& o2) {
     const float minX_a = o1.getPosition('x') - 0.1f;
     const float maxX_a = o1.getPosition('x') + 0.1f;
     const float minX_b = o2.getPosition('x') - 0.1f;
@@ -127,6 +127,7 @@ bool collisionAABB(Player& o1, const Player& o2) {
                 o1.setPositionHard('x', o1.getPosition('x') - overlapX);
         } else {
             o1.setVelocity(0.0f);
+            o2.setVelocity(0.0f);
             if (maxY_a > maxY_b)
                 o1.setPositionHard('y', o1.getPosition('y') + overlapY);
             else

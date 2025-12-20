@@ -16,6 +16,7 @@
 #include <thread>
 #include "src/Network/server.h"
 #include "src/Network/client.h"
+#include "src/gameClasses/MapReader.h"
 
 // declaration
 void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec,  std::vector<Pistol>& pistol, std::vector<MathLine>& func, bool& textInput);
@@ -196,8 +197,13 @@ int main(int argc, char* argv[])
 
     Player player{};
     Player player2{0.5f, 0.5f, 0.2f, 0.2f};
+    Player player3{-0.5f, 0.5f, 0.2f, 0.2f};
     Pistol newAmmo{7, player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection(), 10};
     FireSword newAmmo1{player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection(), 5};
+
+    MapReader level1{1, "../src/Map/level1.txt"};
+    level1.readLevelFile();
+    std::vector<float> level1Vec = level1.getLevelVec();
 
     std::vector<Weapon> vec{};
     std::vector<Pistol> pistol{};
@@ -206,6 +212,7 @@ int main(int argc, char* argv[])
     std::vector<MathLine> functions{};
     players.push_back(player);
     players.push_back(player2);
+    players.push_back(player3);
     pistol.push_back(newAmmo);
     fire_sword_vec.push_back(newAmmo1);
 
@@ -318,6 +325,8 @@ int main(int argc, char* argv[])
 
         // bind different Texture
         glBindTexture(GL_TEXTURE_2D, texture1);
+        
+        level1.loadMap(ourShader, VAO);
 
         // render the triangle
         for (auto& obj: players) {
@@ -329,9 +338,9 @@ int main(int argc, char* argv[])
 
             obj.updateScreen(ourShader);
             glBindVertexArray(VAO);
-
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
         }
+
 
         for (auto& obj : vec) {
             if (obj.getPosition('x') > Map::borderX_RIGHT || obj.getPosition('x') < Map::borderX_LEFT) {

@@ -82,7 +82,7 @@ public:
     void setCurrentWeapon(Values::Type weaponType) { m_currentWeapon = weaponType; }
 
     static Values::Direction getDirection(char c);
-    friend bool collisionAABB(Player& o1, const Player& o2);
+    friend bool collisionAABB(Player& o1, Player& o2);
 };
 
 #endif
