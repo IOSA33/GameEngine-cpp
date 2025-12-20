@@ -25,6 +25,7 @@ add_executable(app main.cpp
                    src/gameClasses/FireSword.cpp
                    src/gameClasses/MathLine.cpp
                    src/gameClasses/MapReader.cpp
+                   src/gameClasses/Enemy.cpp
                    src/Network/server.cpp
                    src/Network/client.cpp)
 
