@@ -2,6 +2,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "Player.h"
+#include "Enemy.h"
 #include <glad/glad.h>
 #include "../shader.h"
 #include <algorithm>
@@ -142,7 +143,14 @@ bool collisionAABB(Player& o1, Player& o2) {
 void Player::attack(Player& player, const int damage) {
     if (player.m_hp > 0) {
         player.setHp(player.getHp() - damage);
-        std::cout << "Enemy has hp left: " << player.getHp() << '\n';
+        std::cout << "Enemy Player has hp left: " << player.getHp() << '\n';
+    } 
+}
+
+void Player::attack(Enemy& enemy, const int damage) {
+    if (enemy.m_hp > 0) {
+        enemy.setHp(enemy.getHp() - damage);
+        std::cout << "Enemy Bot has hp left: " << enemy.getHp() << '\n';
     } 
 }
 

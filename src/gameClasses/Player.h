@@ -2,6 +2,7 @@
 #include "../shader.h"
 
 class Weapon;
+class Enemy;
 
 namespace Values {
     constexpr float gravity { -9.81f };
@@ -58,6 +59,8 @@ public:
     Player() = default;
     Player(const float x, const float y,  const float height, const float width)
         : m_positionX(x), m_positionY(y), m_height(height), m_width(width) {};
+    Player(const float x, const float y,  const float height, const float width, float playerSpeed)
+        : m_positionX(x), m_positionY(y), m_height(height), m_width(width), m_PlayerSpeed(playerSpeed) {};
 
     void move(float x, float y, const Shader& ourShader);
     void setPosition(char c, float deltaTime); 
@@ -67,6 +70,7 @@ public:
     void gravity(float deltaTime);
     void setVelocity(const float x) { m_velocity = x; }
     void attack(Player& player, int damage);
+    void attack(Enemy& enemy, const int damage);
     void setHp(const int x) { m_hp = x; }
     [[nodiscard]] int getHp() const { return m_hp; }
     [[nodiscard]] bool getOnGround() const { return m_onGround; }

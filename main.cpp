@@ -17,6 +17,7 @@
 #include "src/Network/server.h"
 #include "src/Network/client.h"
 #include "src/gameClasses/MapReader.h"
+#include "src/gameClasses/Enemy.h"
 
 // declaration
 void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec,  std::vector<Pistol>& pistol, std::vector<MathLine>& func, bool& textInput);
@@ -197,7 +198,7 @@ int main(int argc, char* argv[])
 
     Player player{};
     Player player2{0.5f, 0.5f, 0.2f, 0.2f};
-    Player player3{-0.5f, 0.5f, 0.2f, 0.2f};
+    Enemy enemy{true, -0.5f, 0.5f, 0.2f, 0.2f, 3.0f};
     Pistol newAmmo{7, player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection(), 10};
     FireSword newAmmo1{player.getPosition('x'), player.getPosition('y'), player.getCurrentDirection(), 5};
 
@@ -210,9 +211,10 @@ int main(int argc, char* argv[])
     std::vector<FireSword> fire_sword_vec{};
     std::vector<Player> players{};
     std::vector<MathLine> functions{};
+    std::vector<Enemy> enemies{};
     players.push_back(player);
     players.push_back(player2);
-    players.push_back(player3);
+    enemies.push_back(enemy);
     pistol.push_back(newAmmo);
     fire_sword_vec.push_back(newAmmo1);
 
@@ -311,11 +313,13 @@ int main(int argc, char* argv[])
         glClearColor(0.4f, 0.611f, 0.572f, 0.8f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        // Backgraound
         bgShader.use();
         glBindTexture(GL_TEXTURE_2D, texture2);
         glBindVertexArray(bgVAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+        // Line functions
         for (auto& obj: functions) {
             line.use();
             obj.updateWindowLine(line, obj);
@@ -325,7 +329,7 @@ int main(int argc, char* argv[])
 
         // bind different Texture
         glBindTexture(GL_TEXTURE_2D, texture1);
-        
+
         level1.loadMap(ourShader, VAO);
 
         // render the triangle
@@ -341,7 +345,17 @@ int main(int argc, char* argv[])
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
         }
 
+        // Enemy
+        for (auto& obj: enemies) {
+            ourShader.use();
+            obj.findPathToPlayer(players, deltaTime);
+            obj.updateScreen(ourShader);
+            obj.gravity(deltaTime);
+            glBindVertexArray(VAO);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        }
 
+        // Bullets
         for (auto& obj : vec) {
             if (obj.getPosition('x') > Map::borderX_RIGHT || obj.getPosition('x') < Map::borderX_LEFT) {
                 auto it = std::find_if(vec.begin(), vec.end(), [&](const Weapon& w) {
@@ -349,16 +363,28 @@ int main(int argc, char* argv[])
                 });
                 vec.erase(it);
             }
-            if (collisionAABB(players[1], obj)) {
+
+            bool enemyCollision = collisionAABB(enemies[0], obj);
+            bool playerCollision = collisionAABB(players[1], obj);
+            
+            if (playerCollision || enemyCollision) {
                 auto it = std::find_if(vec.begin(), vec.end(), [&](const Weapon& w) {
                     return w.getId() == obj.getId();
                 });
                 vec.erase(it);
                 if (players[0].getCurrentWeapon() == Values::Type::pistol) {
-                    player.attack(players[1], pistol[0].getDamage());
+                    if (enemyCollision)
+                        player.attack(enemies[0], pistol[0].getDamage());
+
+                    if (playerCollision)
+                        player.attack(players[1], pistol[0].getDamage());
                 }
                 if (players[0].getCurrentWeapon() == Values::Type::fireSword) {
-                    player.attack(players[1], fire_sword_vec[0].getDamage());
+                    if (enemyCollision)
+                        player.attack(enemies[0], fire_sword_vec[0].getDamage());
+
+                    if (playerCollision)
+                        player.attack(players[1], fire_sword_vec[0].getDamage());
                 }
             }
 
