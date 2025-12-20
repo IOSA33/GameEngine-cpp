@@ -4,9 +4,6 @@
 
 class MathLine;
 
-#ifndef WEAPON_H
-#define WEAPON_H
-
 class Weapon {
 private:
     int m_id{};
@@ -35,5 +32,3 @@ public:
 
     friend bool collisionAABB(const Player& o1, const Weapon& o2);
 };
-
-#endif

@@ -34,7 +34,7 @@ float Player::getPosition(const char c) const {
     }
 }
 
-void Player::setPosition(const char c, const GLfloat deltaTime) {
+void Player::setPosition(const char c, const float deltaTime) {
 	const std::string op = "player/setPosition()";
 	switch (c)
 	{
@@ -76,7 +76,7 @@ void Player::updateScreen(const Shader& shader) const {
     glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
 }
 
-void Player::gravity(const GLfloat deltaTime) {
+void Player::gravity(const float deltaTime) {
     m_velocity += Values::gravity * deltaTime;
     m_positionY += m_velocity * deltaTime;
     if (getPosition('y') < -0.5f) {

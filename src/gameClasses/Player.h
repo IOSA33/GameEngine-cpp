@@ -1,6 +1,3 @@
-#ifndef PLAYER_H
-#define PLAYER_H
-
 #pragma once
 #include "../shader.h"
 
@@ -63,11 +60,11 @@ public:
         : m_positionX(x), m_positionY(y), m_height(height), m_width(width) {};
 
     void move(float x, float y, const Shader& ourShader);
-    void setPosition(char c, GLfloat deltaTime); 
+    void setPosition(char c, float deltaTime); 
     void setPositionHard(char c, float a);
     [[nodiscard]] float getPosition(char c) const;
     void updateScreen(const Shader& shader) const;
-    void gravity(GLfloat deltaTime);
+    void gravity(float deltaTime);
     void setVelocity(const float x) { m_velocity = x; }
     void attack(Player& player, int damage);
     void setHp(const int x) { m_hp = x; }
@@ -84,5 +81,3 @@ public:
     static Values::Direction getDirection(char c);
     friend bool collisionAABB(Player& o1, Player& o2);
 };
-
-#endif

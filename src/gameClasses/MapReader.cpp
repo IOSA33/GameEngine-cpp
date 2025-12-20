@@ -24,7 +24,6 @@ void MapReader::readLevelFile() {
         
         for (size_t j = 0; j < text.size(); ++j) {
             if (text[j] - '0' == 1) {
-                std::cout << "test";
                 m_positionsToRender.emplace_back(startPosX);
                 m_positionsToRender.emplace_back(startPosY);
             }
@@ -42,10 +41,6 @@ void MapReader::readLevelFile() {
             std::cout << m_levelVec[i][j];
         }
         std::cout << std::endl;
-    }
-
-    for (size_t i = 0; i < m_positionsToRender.size(); i += 2) {
-        std::cout << "X: " << m_positionsToRender[i] << "Y: " << m_positionsToRender[i + 1] << '\n';
     }
 }
 
