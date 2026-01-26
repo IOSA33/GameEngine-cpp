@@ -1,6 +1,6 @@
-# GameEngine-cpp
+# GameEngine-cpp with OpenGL
 
-Game Engine that runs 2d FPS game with two player with multiplayer
+Game Engine based on OpenGl that runs 2d FPS game with two player with multiplayer
 
 In this project:
 - NetWork Connection via WinSock2
