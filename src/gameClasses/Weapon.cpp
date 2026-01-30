@@ -3,6 +3,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glad/glad.h>
 #include "../shader.h"
+#include "Enemy.h"
 #include "Weapon.h"
 #include "Player.h"
 #include "MathLine.h"
@@ -79,7 +80,8 @@ void Weapon::setPosition(char c, float value) {
     }
 }
 
-bool collisionAABB(const Player& o1, const Weapon& o2) {
+template<typename N>
+bool collisionAABB(const N& o1, const Weapon& o2) {
     const float minX_a = o1.getPosition('x') - 0.1f;
     const float maxX_a = o1.getPosition('x') + 0.1f;
     const float minX_b = o2.getPosition('x') - 0.1f;
@@ -96,3 +98,5 @@ bool collisionAABB(const Player& o1, const Weapon& o2) {
     // If state is true it means we have collision
     return collisionX && collisionY;
 }
+template bool collisionAABB<Enemy>(const Enemy& o1, const Weapon& o2);
+template bool collisionAABB<Player>(const Player& o1, const Weapon& o2);

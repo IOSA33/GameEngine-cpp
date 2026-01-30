@@ -15,21 +15,3 @@ void Enemy::findPathToPlayer(const std::vector<Player>& playerVec, float deltaTi
         setPosition('l', deltaTime);
     }
 }
-
-bool collisionAABB(const Enemy& o1, const Weapon& o2) {
-    const float minX_a = o1.getPosition('x') - 0.1f;
-    const float maxX_a = o1.getPosition('x') + 0.1f;
-    const float minX_b = o2.getPosition('x') - 0.1f;
-    const float maxX_b = o2.getPosition('x') + 0.1f;
-
-    const float minY_a = o1.getPosition('y') - 0.1f;
-    const float maxY_a = o1.getPosition('y') + 0.1f;
-    const float minY_b = o2.getPosition('y') - 0.1f;
-    const float maxY_b = o2.getPosition('y') + 0.1f;
-
-    const bool collisionX = minX_a <= maxX_b && maxX_a >= minX_b;
-    const bool collisionY = minY_a <= maxY_b && maxY_a >= minY_b;
-
-    // If state is true it means we have collision
-    return collisionX && collisionY;
-}

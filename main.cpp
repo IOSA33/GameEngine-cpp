@@ -99,9 +99,9 @@ int main(int argc, char* argv[])
 
     // build and compile our shader program
     // ------------------------------------
-    Shader ourShader("../src/shader.vs", "../src/shader.fs"); // you can name your shader files however you like
-    Shader bgShader("../src/bg.vs", "../src/bg.fs");
-    Shader line("../src/line.vs", "../src/line.fs");
+    Shader ourShader("../src/Shader/shader.vs", "../src/Shader/shader.fs"); // you can name your shader files however you like
+    Shader bgShader("../src/Shader/bg.vs", "../src/Shader/bg.fs");
+    Shader line("../src/Shader/line.vs", "../src/Shader/line.fs");
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float vertices[] = {
