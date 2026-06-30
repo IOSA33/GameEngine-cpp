@@ -3,18 +3,27 @@ project(opengl_project)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# pacman -S mingw-w64-x86_64-cmake. For cmake on Windows
-# pacman -S mingw-w64-x86_64-glfw. For including glfw in minGW64
-# when executing it will take every .h files from minGW/lib.. etc
-
 # For starting:
-# mkdir build, then cd build
-# cmake ..
+# Step 1 Prerequired libraries
+
+# GLFW library installation
+# sudo apt-get install libglfw3
+# sudo apt-get install libglfw3-dev
+
+# Ninja-build Installation
+# sudo apt install ninja-build
+
+
+# Step 2
+
+# mkdir build
+# cd build
+# cmake .. -G Ninja
 # ninja
-# if everything's OKAY, then ./app.exe, it should create a Window
+# if everything's OKAY, then ./app.exe, it should create an app Window
 
 # GLAD
-add_library(glad ${PROJECT_SOURCE_DIR}/glad.c)
+add_library(glad ${PROJECT_SOURCE_DIR}/Libraries/include/glad/glad.c)
 target_include_directories(glad PUBLIC ${PROJECT_SOURCE_DIR}/Libraries/include)
 
 # main.exe
@@ -26,20 +35,16 @@ add_executable(app main.cpp
                    src/gameClasses/MathLine.cpp
                    src/gameClasses/MapReader.cpp
                    src/gameClasses/Enemy.cpp
+                   
                    src/Network/server.cpp
                    src/Network/client.cpp)
 
-# GLFW from MSYS2/MinGW64
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(GLFW REQUIRED glfw3)
-
-include_directories(${GLFW_INCLUDE_DIRS})
-link_directories(${GLFW_LIBRARY_DIRS})
+# GLFW
+find_package(glfw3 3.4 REQUIRED)
 
 # linking everything together
 target_link_libraries(app
         glad
-        ${GLFW_LIBRARIES}
+        glfw
         opengl32
-        ws2_32
 )

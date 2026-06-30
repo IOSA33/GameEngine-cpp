@@ -14,8 +14,10 @@
 #include <vector>
 #include <algorithm>
 #include <thread>
+
 #include "src/Network/server.h"
 #include "src/Network/client.h"
+
 #include "src/gameClasses/MapReader.h"
 #include "src/gameClasses/Enemy.h"
 
