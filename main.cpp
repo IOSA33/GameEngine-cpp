@@ -5,7 +5,7 @@
 #include "src/shader.h"
 #include <string>
 #define STB_IMAGE_IMPLEMENTATION
-#include "src/stb_image.h"
+#include "Libraries/include/stb_image/stb_image.h"
 #include "src/gameClasses/Player.h"
 #include "src/gameClasses/Weapon.h"
 #include "src/gameClasses/Pistol.h"
