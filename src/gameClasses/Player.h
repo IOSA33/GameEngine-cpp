@@ -62,6 +62,7 @@ public:
         : m_positionX(x), m_positionY(y), m_height(height), m_width(width) {};
     Player(const float x, const float y,  const float height, const float width, float playerSpeed)
         : m_positionX(x), m_positionY(y), m_height(height), m_width(width), m_PlayerSpeed(playerSpeed) {};
+    virtual ~Player() = default;
 
     void move(float x, float y, const Shader& ourShader);
     void setPosition(char c, float deltaTime); 

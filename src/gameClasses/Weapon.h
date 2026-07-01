@@ -18,6 +18,7 @@ public:
     Weapon() = default;
     Weapon(const float x, const float y, const Values::Direction direction, int damage = 1, Values::Type type = Values::Type::pistol)
         : m_positionX(x), m_positionY(y), m_direction(direction), m_damage(damage), m_type(type), m_id(Values::weapon_id) {}
+    virtual ~Weapon() = default;
 
     int getId() const { return m_id; }
     void updateWindow(const Shader& shader) const;

@@ -209,16 +209,13 @@ int main(int argc, char* argv[])
     std::vector<float> level1Vec = level1.getLevelVec();
 
     std::vector<Weapon> vec{};
-    std::vector<Pistol> pistol{};
-    std::vector<FireSword> fire_sword_vec{};
-    std::vector<Player> players{};
+    std::vector<Pistol> pistol{ newAmmo };
+    std::vector<FireSword> fire_sword_vec{ newAmmo1 };
+
     std::vector<MathLine> functions{};
-    std::vector<Enemy> enemies{};
-    players.push_back(player);
-    players.push_back(player2);
-    enemies.push_back(enemy);
-    pistol.push_back(newAmmo);
-    fire_sword_vec.push_back(newAmmo1);
+
+    std::vector<Player> players{ player, player2 };
+    std::vector<Enemy> enemies{ enemy };
 
     // if (hostMode)
     // {
@@ -292,15 +289,27 @@ int main(int argc, char* argv[])
 
     glfwSetCharCallback(window, character_callback);
 
+    int fps { 0 };
+    float timer { 0.0f };
+
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
     {
+        ++fps;
 
         // Calculate delta time
         GLfloat currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+
+        timer += deltaTime;
+        if (timer >= 1.0f) {
+            timer = 0.0f;
+            std::cout << "FPS: " << fps << '\n';
+            fps = 0;
+        }
+
 
         // input
         // -----

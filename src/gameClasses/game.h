@@ -7,6 +7,6 @@ private:
 
 public:
     Game() = default;
-    ~Game() {};
+    ~Game() = default;
 
 };
