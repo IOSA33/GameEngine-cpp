@@ -25,6 +25,7 @@ add_executable(app main.cpp
 find_package(glfw3 3.4 REQUIRED)
 
 # OpenGl
+set(OpenGL_GL_PREFERENCE "GLVND")
 find_package(OpenGL REQUIRED)
 
 # linking everything together

@@ -44,7 +44,6 @@ constexpr unsigned int SCR_WIDTH = 900;
 constexpr unsigned int SCR_HEIGHT = SCR_WIDTH * 9 / 16 + 60;
 
 void setVisible(float& x, char c) {
-	const std::string op = "main/setVisible()";
 	switch (c)
 	{
 	case 'u':
@@ -58,7 +57,7 @@ void setVisible(float& x, char c) {
         }
 		break;
 	default:
-		std::cout << op << ": default break\n";
+		std::cout << "main/setVisible()" << ": default break\n";
 		break;
 	}
 }
@@ -289,26 +288,25 @@ int main(int argc, char* argv[])
 
     glfwSetCharCallback(window, character_callback);
 
-    int fps { 0 };
-    float timer { 0.0f };
+    // int fps { 0 };
+    // float timer { 0.0f };
 
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
     {
-        ++fps;
-
         // Calculate delta time
         GLfloat currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        timer += deltaTime;
-        if (timer >= 1.0f) {
-            timer = 0.0f;
-            std::cout << "FPS: " << fps << '\n';
-            fps = 0;
-        }
+        // ++fps;
+        // timer += deltaTime;
+        // if (timer >= 1.0f) {
+        //     timer = 0.0f;
+        //     std::cout << "FPS: " << fps << '\n';
+        //     fps = 0;
+        // }
 
 
         // input
