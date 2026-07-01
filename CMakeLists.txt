@@ -3,18 +3,19 @@ project(opengl_project)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# For starting:
-# Step 1 Prerequired libraries
+# Step 1 Ubuntu
 
-# GLFW library installation
+# - GLFW -
 # sudo apt-get install libglfw3
 # sudo apt-get install libglfw3-dev
 
-# Ninja-build Installation
+# - OpenGL -
+# sudo apt-get install libgl-dev
+
+# - Ninja-build - 
 # sudo apt install ninja-build
 
-
-# Step 2
+# Step 2 
 
 # mkdir build
 # cd build
@@ -36,15 +37,19 @@ add_executable(app main.cpp
                    src/gameClasses/MapReader.cpp
                    src/gameClasses/Enemy.cpp
                    
-                   src/Network/server.cpp
-                   src/Network/client.cpp)
+                   #src/Network/server.cpp
+                   #src/Network/client.cpp
+                   )
 
 # GLFW
 find_package(glfw3 3.4 REQUIRED)
+
+# OpenGl
+find_package(OpenGL REQUIRED)
 
 # linking everything together
 target_link_libraries(app
         glad
         glfw
-        opengl32
+        OpenGL::GL
 )

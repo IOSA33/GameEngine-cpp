@@ -15,8 +15,8 @@
 #include <algorithm>
 #include <thread>
 
-#include "src/Network/server.h"
-#include "src/Network/client.h"
+// #include "src/Network/server.h"
+// #include "src/Network/client.h"
 
 #include "src/gameClasses/MapReader.h"
 #include "src/gameClasses/Enemy.h"
@@ -220,11 +220,11 @@ int main(int argc, char* argv[])
     pistol.push_back(newAmmo);
     fire_sword_vec.push_back(newAmmo1);
 
-    if (hostMode)
-    {
-        std::thread serverThread(ServerLoop, std::ref(players), std::ref(vec), std::ref(ourShader));
-        serverThread.detach(); 
-    }
+    // if (hostMode)
+    // {
+    //     std::thread serverThread(ServerLoop, std::ref(players), std::ref(vec), std::ref(ourShader));
+    //     serverThread.detach(); 
+    // }
 
     // load and create a texture 
     // -------------------------
@@ -306,9 +306,9 @@ int main(int argc, char* argv[])
         // -----
         processInput(window, players, ourShader, deltaTime, vec, pistol, functions, Values::Input::textInput);
     
-        if (!hostMode) {
-            Client(players, vec, ourShader);
-        }
+        // if (!hostMode) {
+        //     Client(players, vec, ourShader);
+        // }
     
         // render
         // ------ rgba value/255 = answer in floats
