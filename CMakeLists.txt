@@ -3,31 +3,11 @@ project(opengl_project)
 
 set(CMAKE_CXX_STANDARD 23)
 
-# Step 1 Ubuntu
-
-# - GLFW -
-# sudo apt-get install libglfw3
-# sudo apt-get install libglfw3-dev
-
-# - OpenGL -
-# sudo apt-get install libgl-dev
-
-# - Ninja-build - 
-# sudo apt install ninja-build
-
-# Step 2 
-
-# mkdir build
-# cd build
-# cmake .. -G Ninja
-# ninja
-# if everything's OKAY, then ./app.exe, it should create an app Window
-
 # GLAD
 add_library(glad ${PROJECT_SOURCE_DIR}/Libraries/include/glad/glad.c)
 target_include_directories(glad PUBLIC ${PROJECT_SOURCE_DIR}/Libraries/include)
 
-# main.exe
+# ./app.exe
 add_executable(app main.cpp
                    src/gameClasses/Player.cpp
                    src/gameClasses/Weapon.cpp
