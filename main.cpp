@@ -40,7 +40,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 // settings
-constexpr unsigned int SCR_WIDTH = 900;
+constexpr unsigned int SCR_WIDTH = 1980;
 constexpr unsigned int SCR_HEIGHT = SCR_WIDTH * 9 / 16 + 60;
 
 void setVisible(float& x, char c) {
@@ -322,7 +322,7 @@ int main(int argc, char* argv[])
         glClearColor(0.4f, 0.611f, 0.572f, 0.8f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // Backgraound
+        // Background
         bgShader.use();
         glBindTexture(GL_TEXTURE_2D, texture2);
         glBindVertexArray(bgVAO);

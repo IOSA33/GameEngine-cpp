@@ -71,6 +71,7 @@ void Player::setPosition(const char c, const float deltaTime) {
 
 void Player::updateScreen(const Shader& shader) const {
     auto transform = glm::mat4(1.0f);
+    transform = glm::scale(transform, glm::vec3(1.5f, 1.5f, 1.0f));
     transform = glm::translate(transform, glm::vec3(m_positionX, m_positionY, 0.0f));
 
     const unsigned int transformLoc = glGetUniformLocation(shader.ID, "transform");
