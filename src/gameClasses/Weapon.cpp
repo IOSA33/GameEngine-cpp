@@ -8,8 +8,9 @@
 #include "Player.h"
 #include "MathLine.h"
 
-void Weapon::updateWindow(const Shader& shader) const {
+void Weapon::updateWindow(const Shader& shader, float x_zoom) const {
     auto transform = glm::mat4(1.0f);
+    transform = glm::scale(transform, glm::vec3(x_zoom, x_zoom, 1.0f));
     transform = glm::translate(transform, glm::vec3(m_positionX, m_positionY, 0.0f));
     transform = glm::scale(transform, glm::vec3(0.4f));
     

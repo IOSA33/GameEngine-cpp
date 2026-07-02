@@ -21,7 +21,7 @@ public:
     virtual ~Weapon() = default;
 
     int getId() const { return m_id; }
-    void updateWindow(const Shader& shader) const;
+    void updateWindow(const Shader& shader, float x_zoom) const;
     void updateWindowLine(const Shader& shader, MathLine& line) const;
     void move(GLfloat deltaTime);
     [[nodiscard]] float getPosition(char c) const;

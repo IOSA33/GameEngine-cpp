@@ -68,7 +68,7 @@ public:
     void setPosition(char c, float deltaTime); 
     void setPositionHard(char c, float a);
     [[nodiscard]] float getPosition(char c) const;
-    void updateScreen(const Shader& shader) const;
+    void updateScreen(const Shader& shader, float x_zoom) const;
     void gravity(float deltaTime);
     void setVelocity(const float x) { m_velocity = x; }
     template<typename N>

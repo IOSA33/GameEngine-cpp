@@ -28,6 +28,7 @@ void character_callback(GLFWwindow* window, unsigned int codepoint);
 
 namespace Globals {
     float visible = 0.2f;
+    float zoom = 1.3f;
 } // namespace Globals
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -40,7 +41,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 
 // settings
-constexpr unsigned int SCR_WIDTH = 1980;
+constexpr unsigned int SCR_WIDTH = 400;
 constexpr unsigned int SCR_HEIGHT = SCR_WIDTH * 9 / 16 + 60;
 
 void setVisible(float& x, char c) {
@@ -341,7 +342,7 @@ int main(int argc, char* argv[])
 
         level1.loadMap(ourShader, VAO);
 
-        // render the triangle
+        // render the players
         for (auto& obj: players) {
             ourShader.use();
             ourShader.setFloat("visible", Globals::visible);
@@ -349,7 +350,7 @@ int main(int argc, char* argv[])
                 obj.gravity(deltaTime);
             }
 
-            obj.updateScreen(ourShader);
+            obj.updateScreen(ourShader, Globals::zoom);
             glBindVertexArray(VAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
         }
@@ -358,7 +359,7 @@ int main(int argc, char* argv[])
         for (auto& obj: enemies) {
             ourShader.use();
             obj.findPathToPlayer(players, deltaTime);
-            obj.updateScreen(ourShader);
+            obj.updateScreen(ourShader, Globals::zoom);
             obj.gravity(deltaTime);
             glBindVertexArray(VAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
@@ -397,7 +398,7 @@ int main(int argc, char* argv[])
                 }
             }
 
-            obj.updateWindow(ourShader);
+            obj.updateWindow(ourShader, Globals::zoom);
             glBindVertexArray(VAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
             obj.move(deltaTime);
