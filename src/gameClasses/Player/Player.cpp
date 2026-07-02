@@ -1,11 +1,11 @@
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "Player.h"
-#include "Enemy.h"
-#include <glad/glad.h>
-#include "../shader.h"
 #include <algorithm>
+#include "../Player/Player.h"
+#include "../Enemy/Enemy.h"
+#include "../../shader.h"
 
 namespace Map {
     float borderX_RIGHT { 1.0f };

@@ -9,4 +9,5 @@ public:
     Game() = default;
     ~Game() = default;
 
+    void start();
 };

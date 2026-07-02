@@ -1,12 +1,12 @@
-#include "MapReader.h"
+#include <glad/glad.h>
 #include <fstream>
 #include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "Player.h"
-#include <glad/glad.h>
-#include "../shader.h"
+#include "../Player/Player.h"
+#include "../MapReader/MapReader.h"
+#include "../../shader.h"
 
 void MapReader::readLevelFile() {
     std::ifstream file(m_path);

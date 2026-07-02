@@ -9,13 +9,13 @@ target_include_directories(glad PUBLIC ${PROJECT_SOURCE_DIR}/Libraries/include)
 
 # ./app.exe
 add_executable(app main.cpp
-                   src/gameClasses/Player.cpp
-                   src/gameClasses/Weapon.cpp
-                   src/gameClasses/Pistol.cpp
-                   src/gameClasses/FireSword.cpp
-                   src/gameClasses/MathLine.cpp
-                   src/gameClasses/MapReader.cpp
-                   src/gameClasses/Enemy.cpp
+                   src/gameClasses/Player/Player.cpp
+                   src/gameClasses/Weapon/Weapon.cpp
+                   src/gameClasses/Pistol/Pistol.cpp
+                   src/gameClasses/FireSword/FireSword.cpp
+                   src/gameClasses/MathLine/MathLine.cpp
+                   src/gameClasses/MapReader/MapReader.cpp
+                   src/gameClasses/Enemy/Enemy.cpp
                    
                    #src/Network/server.cpp
                    #src/Network/client.cpp

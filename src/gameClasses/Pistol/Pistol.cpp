@@ -1,5 +1,5 @@
-#include "Pistol.h"
-#include "Weapon.h"
+#include "../Pistol/Pistol.h"
+#include "../Weapon/Weapon.h"
 
 Pistol::Pistol(int ammo, const float x, const float y, const Values::Direction direction, int damage)
      : m_ammo(ammo),

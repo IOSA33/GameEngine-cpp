@@ -1,6 +1,7 @@
 #pragma once
-#include "../shader.h"
-#include "Player.h"
+
+#include "../../shader.h"
+#include "../Player/Player.h"
 
 class MathLine;
 

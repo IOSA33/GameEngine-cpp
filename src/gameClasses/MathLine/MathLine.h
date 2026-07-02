@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Weapon.h"
-#include "Player.h"
+#include "../Weapon/Weapon.h"
+#include "../Player/Player.h"
 #include <string>
 
 class MathLine : public Weapon {

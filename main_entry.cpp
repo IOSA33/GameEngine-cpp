@@ -1,6 +1,6 @@
-#include "src/gameClasses/game.h"
-#include <memory>
+#include "src/gameClasses/Game.h"
 
 int main() {
-    std::unique_ptr<Game> game{};
+    Game game{};
+    game.start();
 }

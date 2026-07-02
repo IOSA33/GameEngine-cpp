@@ -1,5 +1,5 @@
 #pragma once
-#include "../shader.h"
+#include "../../shader.h"
 
 class Weapon;
 class Enemy;

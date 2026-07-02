@@ -1,4 +1,4 @@
-#include "MathLine.h"
+#include "../MathLine/MathLine.h"
 #include <string>
 #include <assert.h>
 #include <cmath>

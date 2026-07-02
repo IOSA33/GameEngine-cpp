@@ -1,8 +1,8 @@
 #include <vector>
 #include <iostream>
-#include "Enemy.h"
-#include "Player.h"
-#include "Weapon.h"
+#include "../Enemy/Enemy.h"
+#include "../Player/Player.h"
+#include "../Weapon/Weapon.h"
 
 Enemy::Enemy(bool attack, const float x, const float y, 
     const float height, const float width, float playerSpeed) 

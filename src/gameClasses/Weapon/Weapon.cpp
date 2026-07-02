@@ -1,12 +1,12 @@
+#include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <glad/glad.h>
-#include "../shader.h"
-#include "Enemy.h"
-#include "Weapon.h"
-#include "Player.h"
-#include "MathLine.h"
+#include "../../shader.h"
+#include "../Enemy/Enemy.h"
+#include "../Weapon/Weapon.h"
+#include "../Player/Player.h"
+#include "../MathLine/MathLine.h"
 
 void Weapon::updateWindow(const Shader& shader, float x_zoom) const {
     auto transform = glm::mat4(1.0f);
