@@ -9,5 +9,5 @@ public:
     Game() = default;
     ~Game() = default;
 
-    void start();
+    int start(int argc, char* argv[]);
 };

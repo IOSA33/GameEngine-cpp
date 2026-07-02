@@ -24,10 +24,8 @@
 // #include "src/Network/server.h"
 // #include "src/Network/client.h"
 
-
 // declaration
 void processInput(GLFWwindow *window, std::vector<Player>& vecPlayers, Shader& shader, GLfloat deltaTime, std::vector<Weapon>& vec,  std::vector<Pistol>& pistol, std::vector<MathLine>& func, bool& textInput);
-void setVisible(float& x, char c);
 void character_callback(GLFWwindow* window, unsigned int codepoint);
 
 namespace Globals {
@@ -42,38 +40,16 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-// settings
+// Settings
 constexpr unsigned int SCR_WIDTH = 400;
 constexpr unsigned int SCR_HEIGHT = SCR_WIDTH * 9 / 16 + 60;
-
-void setVisible(float& x, char c) {
-	switch (c)
-	{
-	case 'u':
-        if (!(x > 1.0)) {
-            x += 0.02f;
-        }
-		break;
-	case 'd':
-		if (!(x < 0.0)) {
-            x -= 0.02f;
-        }
-		break;
-	default:
-		std::cout << "main/setVisible()" << ": default break\n";
-		break;
-	}
-}
-
 bool hostMode = false;
 bool serverRunning = true;
 
-// Main idea is that one player is a host and the second is a client
-int main(int argc, char* argv[])
-{
+// Main idea is, that one player is a host and the second is a client
+int Game::start(int argc, char* argv[]) {
     if (argc > 1 && strcmp(argv[1], "host") == 0)
         hostMode = true;
-
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
